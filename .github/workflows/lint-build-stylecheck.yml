@@ -1,0 +1,12 @@
+name: Lint, Build & Check Style on Commit and PRs
+description: "Runs several checks on commits and Pull Requests"
+on: [push, pull_request]
+runs:
+  using: "docker"
+  image: "wpilib/frc-openjdk"
+jobs:
+  gradle:
+    strategy:
+      matrix:
+        os: macos-latest
+
