@@ -1,8 +1,5 @@
 name: Lint, Build & Check Style on Commit and PRs
-runs:
-  on: [push, pull_request]
-  using: "docker"
-  image: "wpilib/frc-openjdk"
+on: [push, pull_request]
 jobs:
   gradle:
     steps:
