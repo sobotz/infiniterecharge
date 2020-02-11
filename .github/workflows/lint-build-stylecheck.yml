@@ -1,7 +1,7 @@
 name: Lint, Build & Check Style on Commit and PRs
 on: [push, pull_request]
 jobs:
-  build:
+  gradle:
     runs-on: ubuntu-16.04
     steps:
     - uses: actions/checkout@v1
