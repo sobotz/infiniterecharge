@@ -8,31 +8,28 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LauncherConstants;
 
-
 public class Launcher extends SubsystemBase {
-  WPI_TalonFX launcherMotor1;
-  WPI_TalonFX launcherMotor2;
-  /**
-   * Creates a new ExampleSubsystem.
-   */
+    WPI_TalonFX launcherMotor1;
+    WPI_TalonFX launcherMotor2;
 
-  public Launcher() {
-  launcherMotor1 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_1);
-  launcherMotor2 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_2);
+    /**
+     * Creates a new ExampleSubsystem.
+     */
 
-  launcherMotor1.configFactoryDefault();
-  launcherMotor2.configFactoryDefault();
+    public Launcher() {
+        launcherMotor1 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_1);
+        launcherMotor2 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_2);
 
-  }
+        launcherMotor1.configFactoryDefault();
+        launcherMotor2.configFactoryDefault();
+    }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    
-  }
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
 
+    }
 }

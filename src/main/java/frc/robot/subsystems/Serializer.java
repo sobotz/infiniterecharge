@@ -8,35 +8,35 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SerializerConstants;
 
-
 public class Serializer extends SubsystemBase {
-  WPI_TalonFX serializerMotor;
+    WPI_TalonFX serializerMotor;
 
-  DigitalInput serializerSensor1, serializerSensor2, serializerSensor3;
+    DigitalInput serializerSensor1, serializerSensor2, serializerSensor3;
 
-  int counter = 0;
-  
-  /**
-   * Creates a new ExampleSubsystem.
-   */
+    int counter = 0;
 
-  public Serializer() {
-    serializerMotor = new WPI_TalonFX(SerializerConstants.SERIALIZER_MOTOR); 
+    /**
+     * Creates a new ExampleSubsystem.
+     */
 
-    serializerSensor1 = new DigitalInput(SerializerConstants.SERIALIZER_SENSOR_1);
-    serializerSensor2 = new DigitalInput(SerializerConstants.SERIALIZER_SENSOR_2);
-    serializerSensor3 = new DigitalInput(SerializerConstants.SERIALIZER_SENSOR_3);
-  }
+    public Serializer() {
+        serializerMotor = new WPI_TalonFX(SerializerConstants.SERIALIZER_MOTOR);
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-     
-  }
+        serializerSensor1 =
+            new DigitalInput(SerializerConstants.SERIALIZER_SENSOR_1);
+        serializerSensor2 =
+            new DigitalInput(SerializerConstants.SERIALIZER_SENSOR_2);
+        serializerSensor3 =
+            new DigitalInput(SerializerConstants.SERIALIZER_SENSOR_3);
+    }
 
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+
+    }
 }

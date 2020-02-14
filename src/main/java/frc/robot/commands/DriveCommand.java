@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drive;
@@ -14,40 +15,40 @@ import frc.robot.subsystems.Drive;
  * An example command that uses an example subsystem.
  */
 public class DriveCommand extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Drive m_driveSubsytem;
+    @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
+    private final Drive m_driveSubsytem;
 
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
-   */
-  public DriveCommand(Drive subsystem) {
-    m_driveSubsytem = subsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_driveSubsytem);
-  }
+    /**
+     * Creates a new ExampleCommand.
+     *
+     * @param subsystem The subsystem used by this command.
+     */
+    public DriveCommand(Drive subsystem) {
+        m_driveSubsytem = subsystem;
+        // Use addRequirements() here to declare subsystem dependencies.
+        addRequirements(m_driveSubsytem);
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    m_driveSubsytem.manualDrive(RobotContainer.joystick.getRawAxis(1),
-        RobotContainer.joystick.getRawAxis(0));
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        m_driveSubsytem.manualDrive(
+            RobotContainer.joystick.getRawAxis(1),
+            RobotContainer.joystick.getRawAxis(0)
+        );
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {}
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

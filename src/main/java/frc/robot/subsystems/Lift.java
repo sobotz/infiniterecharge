@@ -9,20 +9,13 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+public class Lift extends SubsystemBase {
 
-public class LiftSubsystem extends SubsystemBase {
-  /**
-   * Creates a new ExampleSubsystem.
-   */
+    /**
+     * Creates a new instance of the Lift subsystem.
+     */
+    public Lift() {}
 
-  public LiftSubsystem() {
-
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    
-  }
-
+    @Override
+    public void periodic() {}
 }

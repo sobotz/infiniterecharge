@@ -9,83 +9,81 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 
-
 public class Intake extends SubsystemBase {
-  WPI_TalonSRX leftIntakeMotor;
-  WPI_TalonSRX rightIntakeMotor;
+    WPI_TalonSRX leftIntakeMotor;
+    WPI_TalonSRX rightIntakeMotor;
 
-  private DoubleSolenoid intakeDelivery;
-  private boolean intakeDeliveryState = false;
+    private DoubleSolenoid intakeDelivery;
+    private boolean intakeDeliveryState = false;
 
-  /**
-   * Creates a new ExampleSubsystem.
-   */
+    /**
+     * Creates a new ExampleSubsystem.
+     */
 
-  public Intake() {
-    leftIntakeMotor = new WPI_TalonSRX(IntakeConstants.LEFT_INTAKE_MOTOR);
-    rightIntakeMotor = new WPI_TalonSRX(IntakeConstants.RIGHT_INTAKE_MOTOR);
+    public Intake() {
+        leftIntakeMotor = new WPI_TalonSRX(IntakeConstants.LEFT_INTAKE_MOTOR);
+        rightIntakeMotor = new WPI_TalonSRX(IntakeConstants.RIGHT_INTAKE_MOTOR);
 
-    intakeDelivery = new DoubleSolenoid(IntakeConstants.INTAKE_SOLENOID_DEPLOY,
-        IntakeConstants.INTAKE_SOLENOID_RETRACT);
+        intakeDelivery =
+            new DoubleSolenoid(
+                IntakeConstants.INTAKE_SOLENOID_DEPLOY,
+                IntakeConstants.INTAKE_SOLENOID_RETRACT
+            );
 
-    rightIntakeMotor.setInverted(true);
+        rightIntakeMotor.setInverted(true);
 
-    leftIntakeMotor.configFactoryDefault();
-    rightIntakeMotor.configFactoryDefault();
-
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-
-  }
-
-  public void deliverIntake() {
-    if (intakeDeliveryState) {
-      intakeDelivery.set(DoubleSolenoid.Value.kForward);
-    } else {
-      intakeDelivery.set(DoubleSolenoid.Value.kReverse);
+        leftIntakeMotor.configFactoryDefault();
+        rightIntakeMotor.configFactoryDefault();
     }
-  }
 
-  public void changeMotorState(){
-    if(intakeDeliveryState){
-      rightIntakeMotor.stopMotor();
-      leftIntakeMotor.stopMotor();
-    } else{
-      rightIntakeMotor.set(ControlMode.PercentOutput, .1);
-      leftIntakeMotor.set(ControlMode.PercentOutput, .1);
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+
     }
-  }
 
-  public boolean getIntakeDeliveryState() {
-    return intakeDeliveryState;
-  }
-  
-  public void setIntakeDelivery(boolean state){
-    intakeDeliveryState = state;
-  }
+    public void deliverIntake() {
+        if (intakeDeliveryState) {
+            intakeDelivery.set(DoubleSolenoid.Value.kForward);
+        } else {
+            intakeDelivery.set(DoubleSolenoid.Value.kReverse);
+        }
+    }
 
-  public void reverseMotors(){
-    rightIntakeMotor.stopMotor();
-    leftIntakeMotor.stopMotor();
-    Timer.delay(2);
-    rightIntakeMotor.set(ControlMode.PercentOutput, -.1);
-    leftIntakeMotor.set(ControlMode.PercentOutput, -.1);
-    Timer.delay(5);
-    rightIntakeMotor.stopMotor();
-    leftIntakeMotor.stopMotor();
-    Timer.delay(2);
-    rightIntakeMotor.set(ControlMode.PercentOutput, .1);
-    leftIntakeMotor.set(ControlMode.PercentOutput, .1);
-  }
+    public void changeMotorState() {
+        if (intakeDeliveryState) {
+            rightIntakeMotor.stopMotor();
+            leftIntakeMotor.stopMotor();
+        } else {
+            rightIntakeMotor.set(ControlMode.PercentOutput, .1);
+            leftIntakeMotor.set(ControlMode.PercentOutput, .1);
+        }
+    }
 
+    public boolean getIntakeDeliveryState() {
+        return intakeDeliveryState;
+    }
 
+    public void setIntakeDelivery(boolean state) {
+        intakeDeliveryState = state;
+    }
 
+    public void reverseMotors() {
+        rightIntakeMotor.stopMotor();
+        leftIntakeMotor.stopMotor();
+        Timer.delay(2);
+        rightIntakeMotor.set(ControlMode.PercentOutput, -.1);
+        leftIntakeMotor.set(ControlMode.PercentOutput, -.1);
+        Timer.delay(5);
+        rightIntakeMotor.stopMotor();
+        leftIntakeMotor.stopMotor();
+        Timer.delay(2);
+        rightIntakeMotor.set(ControlMode.PercentOutput, .1);
+        leftIntakeMotor.set(ControlMode.PercentOutput, .1);
+    }
 }
