@@ -12,4 +12,4 @@ jobs:
         with:
           arguments: build check
       - name: Run style checks
-        run: ./scripts/checkstyle.sh
+        run: chmod +x ./scripts/checkstyle.sh && ./scripts/checkstyle.sh
