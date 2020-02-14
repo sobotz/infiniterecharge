@@ -11,20 +11,20 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ControlPanelConstants;
 
-
 public class ControlPanel extends SubsystemBase {
-  WPI_TalonSRX controlPanelMotor;
-  /**
-   * Creates a new ExampleSubsystem.
-   */
-   public ControlPanel(){
-     this.controlPanelMotor = new WPI_TalonSRX(ControlPanelConstants.CONTROL_PANEL_MOTOR);
-   }
-  
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    
-  }
+    WPI_TalonSRX controlPanelMotor;
 
+    /**
+     * Creates a new ExampleSubsystem.
+     */
+    public ControlPanel() {
+        this.controlPanelMotor =
+            new WPI_TalonSRX(ControlPanelConstants.CONTROL_PANEL_MOTOR);
+    }
+
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+
+    }
 }
