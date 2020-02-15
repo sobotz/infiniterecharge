@@ -29,11 +29,13 @@ public class DeliverIntakeCommand extends CommandBase {
             m_intake.changeMotorState();
             m_intake.deliverIntake();
             m_intake.setIntakeDelivery(false);
-        } else {
-            m_intake.deliverIntake();
-            m_intake.changeMotorState();
-            m_intake.setIntakeDelivery(true);
+
+            return;
         }
+
+        m_intake.deliverIntake();
+        m_intake.changeMotorState();
+        m_intake.setIntakeDelivery(true);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
