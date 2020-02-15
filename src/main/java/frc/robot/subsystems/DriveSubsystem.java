@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -25,7 +25,7 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
 
     public static class MotorControllerConfiguration {
         /* The front left motor controller */
-        WPI_TalonSRX frontLeftController, frontRightController, backLeftController, backRightController;
+        WPI_TalonFX frontLeftController, frontRightController, backLeftController, backRightController;
 
         /* Controller groups for the left and right sides of the robot */
         SpeedControllerGroup right, left;
@@ -41,10 +41,10 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
         public MotorControllerConfiguration(int frontLeftControllerPort, int frontRightControllerPort,
                 int backLeftControllerPort, int backRightControllerPort) {
             // Initialize each of the talons
-            this.frontLeftController = new WPI_TalonSRX(frontLeftControllerPort);
-            this.frontRightController = new WPI_TalonSRX(frontRightControllerPort);
-            this.backLeftController = new WPI_TalonSRX(backLeftControllerPort);
-            this.backRightController = new WPI_TalonSRX(backRightControllerPort);
+            this.frontLeftController = new WPI_TalonFX(frontLeftControllerPort);
+            this.frontRightController = new WPI_TalonFX(frontRightControllerPort);
+            this.backLeftController = new WPI_TalonFX(backLeftControllerPort);
+            this.backRightController = new WPI_TalonFX(backRightControllerPort);
         }
 
         /**
