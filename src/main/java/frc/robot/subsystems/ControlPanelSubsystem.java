@@ -10,16 +10,26 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ControlPanelConstants;
+import frc.robot.common.Preferences;
 
-public class ControlPanel extends SubsystemBase {
+public class ControlPanelSubsystem extends SubsystemBase implements Preferences.Group {
     WPI_TalonSRX controlPanelMotor;
 
     /**
      * Creates a new ExampleSubsystem.
      */
-    public ControlPanel() {
-        this.controlPanelMotor =
-            new WPI_TalonSRX(ControlPanelConstants.CONTROL_PANEL_MOTOR);
+    public ControlPanelSubsystem() {
+        this.controlPanelMotor = new WPI_TalonSRX(ControlPanelConstants.CONTROL_PANEL_MOTOR);
+    }
+
+    /**
+     * Gets the name of the preferences group.
+     * 
+     * @return the name of the preferences group
+     */
+    @Override
+    public String groupName() {
+        return "controlPanel";
     }
 
     @Override

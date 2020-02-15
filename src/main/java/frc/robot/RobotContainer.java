@@ -7,106 +7,130 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DeliverIntakeCommand;
-import frc.robot.commands.DriveCommand;
+import frc.robot.commands.DifferentialDriveCommand;
+import frc.robot.commands.MoveToReflectiveTargetCommand;
+import frc.robot.commands.RhinoDriveCommand;
 import frc.robot.commands.ReverseIntakeCommand;
 import frc.robot.commands.ShiftGearCommand;
-import frc.robot.subsystems.ControlPanel;
-import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Launcher;
-import frc.robot.subsystems.Lift;
-import frc.robot.subsystems.Navigation;
-import frc.robot.subsystems.Serializer;
-import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.Vision.LimelightConfiguration;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.subsystems.DriveSubsystem.MotorControllerConfiguration;
+import frc.robot.subsystems.VisionSubsystem.LimelightConfiguration;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a "declarative" paradigm, very little robot logic should
- * actually be handled in the {@link Robot} periodic methods (other than the
- * scheduler calls). Instead, the structure of the robot (including subsystems,
- * commands, and button mappings) should be declared here.
+ * RobotContainer holds all of the robot's subsystems, commands, and utility
+ * variables.
  */
 public class RobotContainer {
-    public static Joystick joystick;
-    public static Joystick operatorJoystick;
+    /* BEGIN SUBSYSTEMS */
 
-    // The robot's subsystems and commands are defined here...
-    private final ControlPanel m_controlPanel;
-    private final Drive m_driveSubsystem;
-    private final Intake m_intakeSubsystem;
-    private final Launcher m_launcherSubsystem;
-    private final Lift m_liftSubsystem;
-    private final Navigation m_navigationSubsystem;
-    private final Serializer m_serializerSubsystem;
-    private final Vision m_visionSubsystem;
+    /* The robot's drivetrain. */
+    private final DriveSubsystem m_drivetrain;
 
-    private final DriveCommand m_driveCommand;
-    private final ShiftGearCommand m_gearCommand;
-    private final DeliverIntakeCommand m_deliverIntakeCommand;
+    /* The robot's intake subsystem. */
+    private final IntakeSubsystem m_intake;
+
+    /* The robot's vision subsystem. */
+    private final VisionSubsystem m_vision;
+
+    /* END SUBSYSTEMS */
+
+    /* The robot's settings. */
+    private final Preferences m_preferences;
+
+    /* The driver's joystick. */
+    private final Joystick m_leftDriverJoystick, m_rightDriverJoystick, m_operatorJoystick, m_buttonbox;
+
+    /* BEGIN COMMANDS */
+
+    /* The current teleOp command for the robot. */
+    private final RhinoDriveCommand teleopCommand;
+
+    /* A fallback teleOp command for the robot (arcade drive). */
+    private final DifferentialDriveCommand fallbackTeleopCommand;
+
+    /* The current autonomous command for the robot. */
+    private final MoveToReflectiveTargetCommand visionCommand;
+
+    /* END COMMANDS */
 
     public RobotContainer() {
-        joystick = new Joystick(0);
-        operatorJoystick = new Joystick(1);
+        // The preferences utility class is where we get ALL of our settings from. It is
+        // a direct link to the SmartDashboard, where users can submit preferences to
+        // the RIO
+        this.m_preferences = Preferences.getInstance();
 
-        m_controlPanel = new ControlPanel();
-        m_driveSubsystem = new Drive();
-        m_intakeSubsystem = new Intake();
-        m_launcherSubsystem = new Launcher();
-        m_liftSubsystem = new Lift();
-        m_navigationSubsystem = new Navigation();
-        m_serializerSubsystem = new Serializer();
-        m_visionSubsystem = new Vision(LimelightConfiguration.getDefault());
+        // Make a motor controller config for the drivetraini
+        MotorControllerConfiguration motorCfg = new MotorControllerConfiguration(
+                Constants.DriveConstants.LEFT_FRONT_MOTOR, Constants.DriveConstants.RIGHT_FRONT_MOTOR,
+                Constants.DriveConstants.LEFT_BACK_MOTOR, Constants.DriveConstants.RIGHT_BACK_MOTOR);
 
-        this.m_driveCommand = new DriveCommand(m_driveSubsystem);
-        this.m_gearCommand = new ShiftGearCommand(m_driveSubsystem);
-        this.m_deliverIntakeCommand =
-            new DeliverIntakeCommand(m_intakeSubsystem);
+        // Keep the light on the limelight on at all times
+        LimelightConfiguration visionCfg = new LimelightConfiguration(VisionSubsystem.LEDMode.ON)
+                .applyPreferences(this.m_preferences);
+
+        // Initialize each of the subsystems
+        this.m_drivetrain = new DriveSubsystem(motorCfg);
+        this.m_intake = new IntakeSubsystem();
+        this.m_vision = new VisionSubsystem(visionCfg);
+
+        // Set up the controllers for the teleop command
+        this.m_leftDriverJoystick = new Joystick(0);
+        this.m_rightDriverJoystick = new Joystick(1);
+        this.m_operatorJoystick = new Joystick(2);
+        this.m_buttonbox = new Joystick(3);
+
+        // Set up the actual teleop command
+        this.teleopCommand = new RhinoDriveCommand(this.m_drivetrain, () -> this.m_leftDriverJoystick.getRawAxis(1),
+                () -> this.m_rightDriverJoystick.getRawAxis(1));
+
+        // Set up an alternative teleop command that uses arcade drive; use just one
+        // joystick
+        this.fallbackTeleopCommand = new DifferentialDriveCommand(this.m_drivetrain,
+                () -> this.m_leftDriverJoystick.getRawAxis(0), () -> -this.m_leftDriverJoystick.getRawAxis(1),
+                () -> this.m_leftDriverJoystick.getRawAxis(3));
+
+        // Setup the vision command, and use the provided preferences from the
+        // SmartDashboard in order to override default values
+        this.visionCommand = new MoveToReflectiveTargetCommand(this.m_drivetrain, this.m_vision,
+                MoveToReflectiveTargetCommand.Configuration.getDefault().applyPreferences(this.m_preferences));
 
         // Configure the button bindings
-        configureButtonBindings();
-        // m_driveSubsystem.setDefaultCommand(new DriveCommand(m_driveSubsystem));
+        this.configureButtonBindings();
     }
 
     /**
-     * Use this method to define your button->command mappings. Buttons can be
-     * created by instantiating a {@link GenericHID} or one of its subclasses
-     * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
-     * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     * Activates bindings to the autonomous command from the button box.
      */
     private void configureButtonBindings() {
-        JoystickButton gearShiftButton = new JoystickButton(
-            operatorJoystick,
-            1
-        );
-        JoystickButton deliverIntakeButton = new JoystickButton(
-            operatorJoystick,
-            2
-        );
-        JoystickButton reverseIntakeButton = new JoystickButton(
-            operatorJoystick,
-            3
-        );
+        JoystickButton gearShiftButton = new JoystickButton(this.m_leftDriverJoystick, 1);
+        JoystickButton gearShiftButtonRight = new JoystickButton(this.m_rightDriverJoystick, 1);
+        JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 2);
+        JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 3);
+        JoystickButton activateVisionButton = new JoystickButton(this.m_buttonbox, 1);
 
-        gearShiftButton.toggleWhenPressed(
-            new ShiftGearCommand(m_driveSubsystem)
-        );
-        deliverIntakeButton.toggleWhenPressed(
-            new DeliverIntakeCommand(m_intakeSubsystem)
-        );
-        reverseIntakeButton.whenPressed(
-            new ReverseIntakeCommand(m_intakeSubsystem)
-        );
+        gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
+        gearShiftButtonRight.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
+
+        deliverIntakeButton.toggleWhenPressed(new DeliverIntakeCommand(this.m_intake));
+        reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
+
+        activateVisionButton.toggleWhenPressed(this.visionCommand);
     }
 
     public Command getTeleopCommand() {
-        // An ExampleCommand will run in teleop
-        return m_driveCommand;
+        // If rhino drive isn't explicitly enabled, use the standard differential drive
+        if (this.m_preferences.getBoolean(this.m_drivetrain.preferencesKey("useRhino").toString(), false)) {
+            return this.teleopCommand;
+        }
+
+        // Use differential drive
+        return this.fallbackTeleopCommand;
     }
 }

@@ -7,7 +7,7 @@
 
 package frc.robot;
 
-import frc.robot.subsystems.Vision.LEDMode;
+import frc.robot.subsystems.VisionSubsystem.LEDMode;
 
 /**
  * Constants holds a list of robot-wide constant definitions.
@@ -59,6 +59,53 @@ public final class Constants {
 	public static final class VisionConstants {
 		/* By default, the limelight should remain on, constantly. */
 		public static final LEDMode DEFAULT_LIMELIGHT_MODE = LEDMode.ON;
+
+		/*
+		 * The default multiplier for the distance moved in the
+		 * MoveToReflectiveTargetCommand.
+		 */
+		public static final double DEFAULT_KP = 1.0;
+
+		/*
+		 * The default amount added to the output of the vision subsystem command on
+		 * each run.
+		 */
+		public static final double DEFAULT_KI = 0.01;
+
+		/*
+		 * A secondary multiplier for the distance moved in the
+		 * MoveToReflectiveTargetCommand. This multiplier is applied in a logarithmic
+		 * fashion. For example, a value of 0.4 causes the robot to slow down as it
+		 * reaches the target output.
+		 */
+		public static final double DEFAULT_KCHANGE = 0.4;
+
+		/*
+		 * The default number of degrees that a target may be from the center of the
+		 * vision camera's view.
+		 */
+		public static final double DEFAULT_ERROR_TOLERANCE = 0.25;
+
+		/* The maximum speed of the vision command. */
+		public static final double DEFAULT_MAX_SPEED = 0.75;
+
+		/* The maximum forwards and backwards speed of the vision command. */
+		public static final double DEFAULT_MAX_FORWARD_SPEED = 1;
+
+		/* The degree radius of the vision camera. */
+		public static final double[] DEFAULT_BOUNDS = new double[] { 27.0, 20.5, 2.0 };
+
+		/*
+		 * The number of calls to the vision command in which there must not be a target
+		 * for the command to be stopped.
+		 */
+		public static int TARGETLESS_FRAMES_TO_STOP = 15;
+
+		/*
+		 * The number of calls to the vision command in which there must not be a target
+		 * for the command to be stopped.
+		 */
+		public static int TARGETLESS_FRAMES_TO_Z_STOP = 10;
 	}
 
 	public static final class OIConstants {

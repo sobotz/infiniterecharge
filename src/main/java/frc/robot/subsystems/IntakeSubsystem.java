@@ -13,8 +13,9 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.common.Preferences;
 
-public class Intake extends SubsystemBase {
+public class IntakeSubsystem extends SubsystemBase implements Preferences.Group {
     WPI_TalonSRX leftIntakeMotor;
     WPI_TalonSRX rightIntakeMotor;
 
@@ -25,20 +26,27 @@ public class Intake extends SubsystemBase {
      * Creates a new ExampleSubsystem.
      */
 
-    public Intake() {
+    public IntakeSubsystem() {
         leftIntakeMotor = new WPI_TalonSRX(IntakeConstants.LEFT_INTAKE_MOTOR);
         rightIntakeMotor = new WPI_TalonSRX(IntakeConstants.RIGHT_INTAKE_MOTOR);
 
-        intakeDelivery =
-            new DoubleSolenoid(
-                IntakeConstants.INTAKE_SOLENOID_DEPLOY,
-                IntakeConstants.INTAKE_SOLENOID_RETRACT
-            );
+        intakeDelivery = new DoubleSolenoid(IntakeConstants.INTAKE_SOLENOID_DEPLOY,
+                IntakeConstants.INTAKE_SOLENOID_RETRACT);
 
         rightIntakeMotor.setInverted(true);
 
         leftIntakeMotor.configFactoryDefault();
         rightIntakeMotor.configFactoryDefault();
+    }
+
+    /**
+     * Gets the name of the preferences group.
+     * 
+     * @return the name of the preferences group
+     */
+    @Override
+    public String groupName() {
+        return "intake";
     }
 
     @Override
