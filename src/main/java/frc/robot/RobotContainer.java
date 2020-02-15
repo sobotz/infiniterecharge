@@ -88,13 +88,13 @@ public class RobotContainer {
 
         // Set up the actual teleop command
         this.teleopCommand = new RhinoDriveCommand(this.m_drivetrain, () -> this.m_leftDriverJoystick.getRawAxis(1),
-                () -> this.m_rightDriverJoystick.getRawAxis(1));
+                () -> this.m_rightDriverJoystick.getRawAxis(1)).applyPreferences(this.m_preferences);
 
         // Set up an alternative teleop command that uses arcade drive; use just one
         // joystick
         this.fallbackTeleopCommand = new DifferentialDriveCommand(this.m_drivetrain,
                 () -> this.m_leftDriverJoystick.getRawAxis(0), () -> -this.m_leftDriverJoystick.getRawAxis(1),
-                () -> this.m_leftDriverJoystick.getRawAxis(3));
+                () -> this.m_leftDriverJoystick.getRawAxis(3)).applyPreferences(this.m_preferences);
 
         // Setup the vision command, and use the provided preferences from the
         // SmartDashboard in order to override default values
