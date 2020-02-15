@@ -113,7 +113,7 @@ public class RobotContainer {
         JoystickButton gearShiftButtonRight = new JoystickButton(this.m_rightDriverJoystick, 1);
         JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 2);
         JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 3);
-        JoystickButton activateVisionButton = new JoystickButton(this.m_buttonbox, 1);
+        JoystickButton activateVisionButton = new JoystickButton(this.m_leftDriverJoystick, 2);
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
         gearShiftButtonRight.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
