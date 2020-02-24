@@ -70,7 +70,7 @@ public class DifferentialDriveCommand extends CommandBase
     public void execute() {
         // Drive the drivetrain with a differential drive config
         this.m_drivetrain.drive(Type.DIFFERENTIAL,
-                new double[] { this.xInput.getAsDouble(), this.yInput.getAsDouble(), this.zInput.getAsDouble() });
+                new double[] { this.yInput.getAsDouble(), this.xInput.getAsDouble(), this.zInput.getAsDouble() });
     }
 
     /**
