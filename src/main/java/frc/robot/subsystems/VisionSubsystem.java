@@ -128,7 +128,7 @@ public class VisionSubsystem extends SubsystemBase implements Group {
     private NetworkTable limelightTable;
 
     /* A configuration for the LimelightConfiguratioin. */
-    private LimelightConfiguration limelightConfiguratiion;
+    private LimelightConfiguration limelightConfiguration;
 
     /**
      * Initializes the vision subsystem with the given network tables configuration.
@@ -140,10 +140,10 @@ public class VisionSubsystem extends SubsystemBase implements Group {
         this.limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 
         // Use the user-provided limelight configuration class
-        this.limelightConfiguratiion = limelightConfiguration;
+        this.limelightConfiguration = limelightConfiguration;
 
         // Apply all of our setttings
-        this.limelightConfiguratiion.applySettings(this.limelightTable);
+        this.limelightConfiguration.applySettings(this.limelightTable);
     }
 
     /**
@@ -153,7 +153,7 @@ public class VisionSubsystem extends SubsystemBase implements Group {
      * @return the initialized, default vision subsystem
      */
     public static VisionSubsystem getDefault() {
-        return new VisionSubsystem(null);
+        return new VisionSubsystem(LimelightConfiguration.getDefault());
     }
 
     /**
