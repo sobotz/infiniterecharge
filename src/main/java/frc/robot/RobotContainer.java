@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.DeliverIntakeCommand;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.ReverseIntakeCommand;
+import frc.robot.commands.IntakeControl;
 import frc.robot.commands.ShiftGearCommand;
 import frc.robot.subsystems.ControlPanel;
 import frc.robot.subsystems.Drive;
@@ -48,6 +48,7 @@ public class RobotContainer {
   private final DriveCommand m_driveCommand;
   private final ShiftGearCommand m_gearCommand;
   private final DeliverIntakeCommand m_deliverIntakeCommand;
+  private final IntakeControl m_intakeControlCommand;
   
   public RobotContainer() {
     joystick = new Joystick(0);
@@ -66,6 +67,7 @@ public class RobotContainer {
     this.m_driveCommand = new DriveCommand(m_driveSubsystem);
     this.m_gearCommand = new ShiftGearCommand(m_driveSubsystem);
     this.m_deliverIntakeCommand = new DeliverIntakeCommand(m_intakeSubsystem);
+    this.m_intakeControlCommand = new IntakeControl(m_intakeSubsystem);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -82,12 +84,12 @@ public class RobotContainer {
   private void configureButtonBindings() {
     JoystickButton gearShiftButton = new JoystickButton(operatorJoystick, 1);
     JoystickButton deliverIntakeButton = new JoystickButton(operatorJoystick, 2);
-    JoystickButton reverseIntakeButton = new JoystickButton(operatorJoystick, 3);
+    JoystickButton controlIntakeButton = new JoystickButton(operatorJoystick, 3);
 
-    gearShiftButton.toggleWhenPressed(new ShiftGearCommand(m_driveSubsystem));
-    deliverIntakeButton.toggleWhenPressed(new DeliverIntakeCommand(m_intakeSubsystem));
-    reverseIntakeButton.whenPressed(new ReverseIntakeCommand(m_intakeSubsystem));
-
+    gearShiftButton.toggleWhenPressed(m_gearCommand);
+    deliverIntakeButton.toggleWhenPressed(m_deliverIntakeCommand);
+    controlIntakeButton.whenPressed(m_intakeControlCommand);
+    m_intakeSubsystem.setDefaultCommand(m_intakeControlCommand);
   }
 
 

@@ -21,7 +21,7 @@ public class DeliverIntakeCommand extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
   } 
 
-  // Called when the command is initially scheduled.
+  // Called when the command is initially scheduled. 
   @Override
   public void initialize() {
     if (m_intake.getIntakeDeliveryState()) {

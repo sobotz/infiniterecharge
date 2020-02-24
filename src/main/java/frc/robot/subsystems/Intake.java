@@ -16,8 +16,7 @@ import frc.robot.Constants.IntakeConstants;
 
 
 public class Intake extends SubsystemBase {
-  WPI_TalonSRX leftIntakeMotor;
-  WPI_TalonSRX rightIntakeMotor;
+  WPI_TalonSRX intakeTalon;
 
   private DoubleSolenoid intakeDelivery;
   private boolean intakeDeliveryState = false;
@@ -27,16 +26,13 @@ public class Intake extends SubsystemBase {
    */
 
   public Intake() {
-    leftIntakeMotor = new WPI_TalonSRX(IntakeConstants.LEFT_INTAKE_MOTOR);
-    rightIntakeMotor = new WPI_TalonSRX(IntakeConstants.RIGHT_INTAKE_MOTOR);
+    intakeTalon = new WPI_TalonSRX(IntakeConstants.LEFT_INTAKE_MOTOR);
 
     intakeDelivery = new DoubleSolenoid(IntakeConstants.INTAKE_SOLENOID_DEPLOY,
         IntakeConstants.INTAKE_SOLENOID_RETRACT);
 
-    rightIntakeMotor.setInverted(true);
 
-    leftIntakeMotor.configFactoryDefault();
-    rightIntakeMotor.configFactoryDefault();
+    intakeTalon.configFactoryDefault();
 
   }
 
@@ -56,11 +52,9 @@ public class Intake extends SubsystemBase {
 
   public void changeMotorState(){
     if(intakeDeliveryState){
-      rightIntakeMotor.stopMotor();
-      leftIntakeMotor.stopMotor();
+      intakeTalon.stopMotor();
     } else{
-      rightIntakeMotor.set(ControlMode.PercentOutput, .1);
-      leftIntakeMotor.set(ControlMode.PercentOutput, .1);
+      intakeTalon.set(ControlMode.PercentOutput, .1);
     }
   }
 
@@ -72,7 +66,11 @@ public class Intake extends SubsystemBase {
     intakeDeliveryState = state;
   }
 
-  public void reverseMotors(){
+  public void controlIntake(double intakeSpeed){
+    intakeTalon.set(ControlMode.PercentOutput, intakeSpeed);
+  }
+
+  /*public void reverseMotors(){
     rightIntakeMotor.stopMotor();
     leftIntakeMotor.stopMotor();
     Timer.delay(2);
@@ -85,6 +83,7 @@ public class Intake extends SubsystemBase {
     rightIntakeMotor.set(ControlMode.PercentOutput, .1);
     leftIntakeMotor.set(ControlMode.PercentOutput, .1);
   }
+  */
 
 
 
