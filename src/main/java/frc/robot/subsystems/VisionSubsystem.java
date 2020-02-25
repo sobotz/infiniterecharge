@@ -20,7 +20,7 @@ public class VisionSubsystem extends SubsystemBase implements Group {
      * LEDMode represents one of 4 LED modes available to the limelight.
      */
     public static enum LEDMode {
-        DEFAULT(1), BLINK(2), ON(3), OFF(4);
+        DEFAULT(3), BLINK(2), ON(3), OFF(4);
 
         /* The value corresponding to the LEDMode. */
         private final int intVal;

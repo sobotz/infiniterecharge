@@ -113,15 +113,8 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
      * @param percentageSpeeds the percentage speed values to drive with
      */
     public void drive(Type driveType, double[] percentageSpeeds) {
-        if (driveType.equals(Type.RHINO)) {
-            // Drive the robot
-            this.motorControllers.drive(Type.RHINO, percentageSpeeds[0], percentageSpeeds[1]);
-
-            return;
-        }
-
-        // Use differential drive to drive the robot
-        this.motorControllers.drive(Type.DIFFERENTIAL, percentageSpeeds[0], percentageSpeeds[1]);
+        // Use the preferred drive to drive the robot
+        this.motorControllers.drive(driveType, percentageSpeeds[0], percentageSpeeds[1]);
     }
 
     /**

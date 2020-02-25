@@ -413,19 +413,22 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
             // we will extract the information for the configuration of the command
             VisionSubsystem preferencesBuilder = VisionSubsystem.getDefault();
 
+            // Get a default instane of the command config so that we can fallback to some values
+            Configuration defaultConfig = Configuration.getDefault();
+
             // Use all default values for each of the configuration fields. Or, if we can
             // get override values from the preferences instance, use those.
-            this.kP = () -> prefs.getDouble(preferencesBuilder.preferencesKey("kP").toString(), this.kP.getAsDouble());
-            this.kI = () -> prefs.getDouble(preferencesBuilder.preferencesKey("kI").toString(), this.kI.getAsDouble());
+            this.kP = () -> prefs.getDouble(preferencesBuilder.preferencesKey("kP").toString(), defaultConfig.kP.getAsDouble());
+            this.kI = () -> prefs.getDouble(preferencesBuilder.preferencesKey("kI").toString(), defaultConfig.kI.getAsDouble());
             this.kChange = () -> prefs.getDouble(preferencesBuilder.preferencesKey("kChange").toString(),
-                    this.kChange.getAsDouble());
+                    defaultConfig.kChange.getAsDouble());
             this.errorTolerance = () -> prefs.getDouble(preferencesBuilder.preferencesKey("errorTolerance").toString(),
-                    this.errorTolerance.getAsDouble());
+                    defaultConfig.errorTolerance.getAsDouble());
             this.maximumSpeed = () -> prefs.getDouble(preferencesBuilder.preferencesKey("maximumSpeed").toString(),
-                    this.maximumSpeed.getAsDouble());
+                    defaultConfig.maximumSpeed.getAsDouble());
             this.maximumForwardSpeed = () -> prefs.getDouble(
                     preferencesBuilder.preferencesKey("maximumForwardSpeed").toString(),
-                    this.maximumForwardSpeed.getAsDouble());
+                    defaultConfig.maximumForwardSpeed.getAsDouble());
 
             return this;
         }
@@ -581,21 +584,7 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
         }
 
         // Check that we need to correct for Y axis error
-        if (this.state.needsCorrectionOnAxis(Axis.Y, this.cfg.getErrorTolerance()) && this.state.hasInitialHeading) {
-            // Calculate the gain with the y offset
-            double gain = this.cfg.getKp() * offsets[1] * this.cfg.getMaximumForwardSpeed() + this.cfg.getKi();
-            gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
-
-            // Move forward and back using the gain variable
-            this.m_drivetrain.drive(Type.RHINO, new double[] { gain, gain });
-        } else if (this.state.needsCorrectionOnAxis(Axis.X, this.cfg.getErrorTolerance())) {
-            // Calculate the gain with the x offset
-            double gain = this.cfg.getKp() * offsets[0] * this.cfg.getMaximumSpeed();
-            gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
-
-            // Spin in one spot using the provided gain variable
-            this.m_drivetrain.drive(Type.RHINO, new double[] { -gain, gain });
-        } else if (this.state.needsCorrectionOnAxis(Axis.Z, this.cfg.getErrorTolerance())
+        if (this.state.needsCorrectionOnAxis(Axis.Z, this.cfg.getErrorTolerance())
                 && this.state.hasInitialHeading) {
             // Calculate the gain with the z offset
             double gain = this.cfg.getKp() * offsets[2] * this.cfg.getMaximumSpeed() + this.cfg.getKi();
@@ -603,6 +592,20 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
 
             // Move forward and back using the gain variable
             this.m_drivetrain.drive(Type.RHINO, new double[] { -gain, -gain });
+        } else if (this.state.needsCorrectionOnAxis(Axis.X, this.cfg.getErrorTolerance())) {
+            // Calculate the gain with the x offset
+            double gain = this.cfg.getKp() * offsets[0] * this.cfg.getMaximumSpeed();
+            gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
+
+            // Spin in one spot using the provided gain variable
+            this.m_drivetrain.drive(Type.RHINO, new double[] { -gain, gain });
+        } else if (this.state.needsCorrectionOnAxis(Axis.Y, this.cfg.getErrorTolerance()) && this.state.hasInitialHeading) {
+            // Calculate the gain with the y offset
+            double gain = this.cfg.getKp() * offsets[1] * this.cfg.getMaximumForwardSpeed() + this.cfg.getKi();
+            gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
+
+            // Move forward and back using the gain variable
+            this.m_drivetrain.drive(Type.RHINO, new double[] { gain, gain });
         }
     }
 

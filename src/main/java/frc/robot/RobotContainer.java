@@ -45,7 +45,7 @@ public class RobotContainer {
     private final Preferences m_preferences;
 
     /* The driver's joystick. */
-    private final Joystick m_leftDriverJoystick, m_rightDriverJoystick, m_operatorJoystick, m_buttonbox;
+    private final Joystick m_leftDriverJoystick, /*m_rightDriverJoystick, m_operatorJoystick,*/ m_buttonbox;
 
     /* BEGIN COMMANDS */
 
@@ -82,19 +82,19 @@ public class RobotContainer {
 
         // Set up the controllers for the teleop command
         this.m_leftDriverJoystick = new Joystick(0);
-        this.m_rightDriverJoystick = new Joystick(1);
-        this.m_operatorJoystick = new Joystick(2);
+        //this.m_rightDriverJoystick = new Joystick(1);
+        //this.m_operatorJoystick = new Joystick(2);
         this.m_buttonbox = new Joystick(3);
 
         // Set up the actual teleop command
         this.teleopCommand = new RhinoDriveCommand(this.m_drivetrain, () -> this.m_leftDriverJoystick.getRawAxis(1),
-                () -> this.m_rightDriverJoystick.getRawAxis(1)).applyPreferences(this.m_preferences);
+                () -> this.m_leftDriverJoystick.getRawAxis(1)).applyPreferences(this.m_preferences);
 
         // Set up an alternative teleop command that uses arcade drive; use just one
         // joystick
         this.fallbackTeleopCommand = new DifferentialDriveCommand(this.m_drivetrain,
                 () -> this.m_leftDriverJoystick.getRawAxis(0), () -> -this.m_leftDriverJoystick.getRawAxis(1),
-                () -> this.m_leftDriverJoystick.getRawAxis(3)).applyPreferences(this.m_preferences);
+                () -> this.m_leftDriverJoystick.getRawAxis(2)).applyPreferences(this.m_preferences);
 
         // Setup the vision command, and use the provided preferences from the
         // SmartDashboard in order to override default values
@@ -110,16 +110,16 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         JoystickButton gearShiftButton = new JoystickButton(this.m_leftDriverJoystick, 1);
-        JoystickButton gearShiftButtonRight = new JoystickButton(this.m_rightDriverJoystick, 1);
-        JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 2);
-        JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 3);
+        //JoystickButton gearShiftButtonRight = new JoystickButton(this.m_rightDriverJoystick, 1);
+        //JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 2);
+        //JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 3);
         JoystickButton activateVisionButton = new JoystickButton(this.m_buttonbox, 1);
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
-        gearShiftButtonRight.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
+        //gearShiftButtonRight.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
 
-        deliverIntakeButton.toggleWhenPressed(new DeliverIntakeCommand(this.m_intake));
-        reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
+        //deliverIntakeButton.toggleWhenPressed(new DeliverIntakeCommand(this.m_intake));
+        //reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
 
         activateVisionButton.toggleWhenPressed(this.visionCommand);
     }

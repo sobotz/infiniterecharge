@@ -21,6 +21,7 @@ public class DifferentialDriveCommand extends CommandBase
 
     /* The x and y axis inputs from the joystick. */
     private final DoubleSupplier xInput, yInput, zInput;
+    private DoubleSupplier finalX, finalY, finalZ;
 
     /* A speed limitation variable provided through smart dashboard. */
     private DoubleSupplier maximumSpeed;
@@ -41,9 +42,12 @@ public class DifferentialDriveCommand extends CommandBase
         this.maximumSpeed = () -> 1.0;
 
         // Use the axis inputs that the user provided
-        this.xInput = () -> this.maximumSpeed.getAsDouble() * xInput.getAsDouble();
-        this.yInput = () -> this.maximumSpeed.getAsDouble() * yInput.getAsDouble();
-        this.zInput = () -> this.maximumSpeed.getAsDouble() * zInput.getAsDouble();
+        this.xInput = xInput;
+        this.yInput = yInput;
+        this.zInput = zInput;
+        this.finalX = this.xInput;
+        this.finalY = this.yInput;
+        this.finalZ = this.zInput;
     }
 
     /**
@@ -58,6 +62,10 @@ public class DifferentialDriveCommand extends CommandBase
         // from there
         this.maximumSpeed = () -> prefs.getDouble(this.m_drivetrain.preferencesKey("maximumSpeed").toString(), 1.0);
 
+        this.finalX = () -> this.maximumSpeed.getAsDouble() * this.xInput.getAsDouble();
+        this.finalY = () -> this.maximumSpeed.getAsDouble() * this.yInput.getAsDouble();
+        this.finalZ = () -> this.maximumSpeed.getAsDouble() * this.zInput.getAsDouble();
+
         // Use all of the previously provided configuration variables, aside from the
         // maximum speed
         return this;
@@ -70,7 +78,7 @@ public class DifferentialDriveCommand extends CommandBase
     public void execute() {
         // Drive the drivetrain with a differential drive config
         this.m_drivetrain.drive(Type.DIFFERENTIAL,
-                new double[] { this.xInput.getAsDouble(), this.yInput.getAsDouble(), this.zInput.getAsDouble() });
+                new double[] { this.finalX.getAsDouble(), this.finalY.getAsDouble(), this.finalZ.getAsDouble() });
     }
 
     /**
