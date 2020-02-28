@@ -583,16 +583,18 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
             return;
         }
 
+        double tolerance = this.state.hasInitialHeading ? this.cfg.getErrorTolerance() * 2.5 : this.cfg.getErrorTolerance();
+
         // Check that we need to correct for Y axis error
         if (this.state.needsCorrectionOnAxis(Axis.Z, this.cfg.getErrorTolerance())
                 && this.state.hasInitialHeading) {
             // Calculate the gain with the z offset
-            double gain = this.cfg.getKp() * offsets[2] * this.cfg.getMaximumSpeed() + this.cfg.getKi();
+            double gain = this.cfg.getKp() * offsets[2] * this.cfg.getMaximumForwardSpeed() + this.cfg.getKi();
             // gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
 
             // Move forward and back using the gain variable
             this.m_drivetrain.drive(Type.RHINO, new double[] { -gain, -gain });
-        } else if (this.state.needsCorrectionOnAxis(Axis.X, this.cfg.getErrorTolerance())) {
+        } else if (this.state.needsCorrectionOnAxis(Axis.X, tolerance)) {
             // Calculate the gain with the x offset
             double gain = this.cfg.getKp() * offsets[0] * this.cfg.getMaximumSpeed();
             gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
