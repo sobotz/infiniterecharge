@@ -11,8 +11,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SerializerConstants;
+import frc.robot.common.Preferences;
 
-public class Serializer extends SubsystemBase {
+public class SerializerSubsystem extends SubsystemBase implements Preferences.Group {
     WPI_TalonFX serializerMotor;
 
     DigitalInput serializerSensor1, serializerSensor2, serializerSensor3;
@@ -23,15 +24,22 @@ public class Serializer extends SubsystemBase {
      * Creates a new ExampleSubsystem.
      */
 
-    public Serializer() {
+    public SerializerSubsystem() {
         serializerMotor = new WPI_TalonFX(SerializerConstants.SERIALIZER_MOTOR);
 
-        serializerSensor1 =
-            new DigitalInput(SerializerConstants.SERIALIZER_SENSOR_1);
-        serializerSensor2 =
-            new DigitalInput(SerializerConstants.SERIALIZER_SENSOR_2);
-        serializerSensor3 =
-            new DigitalInput(SerializerConstants.SERIALIZER_SENSOR_3);
+        serializerSensor1 = new DigitalInput(SerializerConstants.SERIALIZER_SENSOR_1);
+        serializerSensor2 = new DigitalInput(SerializerConstants.SERIALIZER_SENSOR_2);
+        serializerSensor3 = new DigitalInput(SerializerConstants.SERIALIZER_SENSOR_3);
+    }
+
+    /**
+     * Gets the name of the preferences group.
+     * 
+     * @return the name of the preferences group
+     */
+    @Override
+    public String groupName() {
+        return "serializer";
     }
 
     @Override

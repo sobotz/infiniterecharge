@@ -8,14 +8,27 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.common.Preferences;
 
-public class Lift extends SubsystemBase {
+public class LiftSubsystem extends SubsystemBase implements Preferences.Group {
 
     /**
      * Creates a new instance of the Lift subsystem.
      */
-    public Lift() {}
+    public LiftSubsystem() {
+    }
+
+    /**
+     * Gets the name of the preferences group.
+     * 
+     * @return the name of the preferences group
+     */
+    @Override
+    public String groupName() {
+        return "lift";
+    }
 
     @Override
-    public void periodic() {}
+    public void periodic() {
+    }
 }

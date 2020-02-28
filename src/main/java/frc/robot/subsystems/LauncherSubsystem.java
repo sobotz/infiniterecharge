@@ -10,8 +10,9 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LauncherConstants;
+import frc.robot.common.Preferences;
 
-public class Launcher extends SubsystemBase {
+public class LauncherSubsystem extends SubsystemBase implements Preferences.Group {
     WPI_TalonFX launcherMotor1;
     WPI_TalonFX launcherMotor2;
 
@@ -19,12 +20,22 @@ public class Launcher extends SubsystemBase {
      * Creates a new ExampleSubsystem.
      */
 
-    public Launcher() {
+    public LauncherSubsystem() {
         launcherMotor1 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_1);
         launcherMotor2 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_2);
 
         launcherMotor1.configFactoryDefault();
         launcherMotor2.configFactoryDefault();
+    }
+
+    /**
+     * Gets the name of the preferences group.
+     * 
+     * @return the name of the preferences group
+     */
+    @Override
+    public String groupName() {
+        return "launcher";
     }
 
     @Override
