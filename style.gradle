@@ -1,0 +1,18 @@
+// Configure the "spotless" formatting plugin. Usage should include the markdown file,
+// gradle settings, and the src folder.
+spotless {
+    format "misc" {
+        target "**/*.gradle", "**/*.md", "**/.gitignore", "**/*.java"
+
+        trimTrailingWhitespace()
+        indentWithSpaces(4)
+        endWithNewline()
+    }
+
+    java {
+        target "**/*.java",
+
+        removeUnusedImports()
+        googleJavaFormat()
+    }
+}

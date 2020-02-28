@@ -8,36 +8,37 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeSubsystem;
 
 public class DeliverIntakeCommand extends CommandBase {
-  private final Intake m_intake;
+  private final IntakeSubsystem m_intake;
+
   /**
    * Creates a new DeliverIntakeCommand.
    */
-  public DeliverIntakeCommand(Intake subsystem) {
+  public DeliverIntakeCommand(IntakeSubsystem subsystem) {
     m_intake = subsystem;
     addRequirements(m_intake);
     // Use addRequirements() here to declare subsystem dependencies.
-  } 
+  }
 
-  // Called when the command is initially scheduled. 
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     if (m_intake.getIntakeDeliveryState()) {
       m_intake.changeMotorState();
       m_intake.deliverIntake();
       m_intake.setIntakeDelivery(false);
-    } else{
+    } else {
       m_intake.deliverIntake();
       m_intake.changeMotorState();
       m_intake.setIntakeDelivery(true);
-    } 
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() { 
+  public void execute() {
   }
 
   // Called once the command ends or is interrupted.

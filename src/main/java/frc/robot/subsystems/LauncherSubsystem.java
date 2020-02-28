@@ -7,15 +7,25 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.LauncherConstants;
 import frc.robot.common.Preferences;
 
-public class LiftSubsystem extends SubsystemBase implements Preferences.Group {
+public class LauncherSubsystem extends SubsystemBase implements Preferences.Group {
+    WPI_TalonFX launcherMotor1;
+    WPI_TalonFX launcherMotor2;
 
     /**
-     * Creates a new instance of the Lift subsystem.
+     * Creates a new ExampleSubsystem.
      */
-    public LiftSubsystem() {
+
+    public LauncherSubsystem() {
+        launcherMotor1 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_1);
+        launcherMotor2 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_2);
+
+        launcherMotor1.configFactoryDefault();
+        launcherMotor2.configFactoryDefault();
     }
 
     /**
@@ -25,10 +35,12 @@ public class LiftSubsystem extends SubsystemBase implements Preferences.Group {
      */
     @Override
     public String groupName() {
-        return "lift";
+        return "launcher";
     }
 
     @Override
     public void periodic() {
+        // This method will be called once per scheduler run
+
     }
 }

@@ -8,21 +8,30 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.common.Preferences;
 
+public class NavigationSubsystem extends SubsystemBase implements Preferences.Group {
 
-public class Vision extends SubsystemBase {
-  /**
-   * Creates a new ExampleSubsystem.
-   */
-   
-  public Vision(){
+    /**
+     * Creates a new ExampleSubsystem.
+     */
 
-  }
-  
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    
-  }
+    public NavigationSubsystem() {
+    }
 
+    /**
+     * Gets the name of the preferences group.
+     * 
+     * @return the name of the preferences group
+     */
+    @Override
+    public String groupName() {
+        return "navigation";
+    }
+
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+
+    }
 }

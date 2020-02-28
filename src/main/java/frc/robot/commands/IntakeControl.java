@@ -7,40 +7,43 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakeControl extends CommandBase {
-  private final Intake m_intake;
+    private final IntakeSubsystem m_intake;
+    private final DoubleSupplier controllerInput;
 
-  /**
-   * Creates a new ReverseIntakeCommand.
-   */
-  public IntakeControl(Intake subsystem) {
-    m_intake = subsystem;
-    // Use addRequirements() here to declare subsystem dependencies.
-  }
+    /**
+     * Creates a new ReverseIntakeCommand.
+     */
+    public IntakeControl(IntakeSubsystem subsystem, DoubleSupplier controllerInput) {
+        m_intake = subsystem;
+        this.controllerInput = controllerInput;
+        // Use addRequirements() here to declare subsystem dependencies.
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+    }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    m_intake.controlIntake(RobotContainer.operatorJoystick.getRawAxis(1));
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        m_intake.controlIntake(this.controllerInput.getAsDouble());
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }
