@@ -10,14 +10,12 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.common.Preferences;
 
 public class IntakeSubsystem extends SubsystemBase implements Preferences.Group {
-    WPI_TalonSRX leftIntakeMotor;
-    WPI_TalonSRX rightIntakeMotor;
+    WPI_TalonSRX intakeTalon;
 
     private DoubleSolenoid intakeDelivery;
     private boolean intakeDeliveryState = false;
@@ -27,16 +25,13 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
      */
 
     public IntakeSubsystem() {
-        leftIntakeMotor = new WPI_TalonSRX(IntakeConstants.LEFT_INTAKE_MOTOR);
-        rightIntakeMotor = new WPI_TalonSRX(IntakeConstants.RIGHT_INTAKE_MOTOR);
+        intakeTalon = new WPI_TalonSRX(IntakeConstants.LEFT_INTAKE_MOTOR);
 
         intakeDelivery = new DoubleSolenoid(IntakeConstants.INTAKE_SOLENOID_DEPLOY,
                 IntakeConstants.INTAKE_SOLENOID_RETRACT);
 
-        rightIntakeMotor.setInverted(true);
+        intakeTalon.configFactoryDefault();
 
-        leftIntakeMotor.configFactoryDefault();
-        rightIntakeMotor.configFactoryDefault();
     }
 
     /**
@@ -65,11 +60,9 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
 
     public void changeMotorState() {
         if (intakeDeliveryState) {
-            rightIntakeMotor.stopMotor();
-            leftIntakeMotor.stopMotor();
+            intakeTalon.stopMotor();
         } else {
-            rightIntakeMotor.set(ControlMode.PercentOutput, .1);
-            leftIntakeMotor.set(ControlMode.PercentOutput, .1);
+            intakeTalon.set(ControlMode.PercentOutput, .1);
         }
     }
 
@@ -81,17 +74,18 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
         intakeDeliveryState = state;
     }
 
-    public void reverseMotors() {
-        rightIntakeMotor.stopMotor();
-        leftIntakeMotor.stopMotor();
-        Timer.delay(2);
-        rightIntakeMotor.set(ControlMode.PercentOutput, -.1);
-        leftIntakeMotor.set(ControlMode.PercentOutput, -.1);
-        Timer.delay(5);
-        rightIntakeMotor.stopMotor();
-        leftIntakeMotor.stopMotor();
-        Timer.delay(2);
-        rightIntakeMotor.set(ControlMode.PercentOutput, .1);
-        leftIntakeMotor.set(ControlMode.PercentOutput, .1);
+    public void controlIntake(double intakeSpeed) {
+        intakeTalon.set(ControlMode.PercentOutput, intakeSpeed);
     }
+
+    /*
+     * public void reverseMotors(){ rightIntakeMotor.stopMotor();
+     * leftIntakeMotor.stopMotor(); Timer.delay(2);
+     * rightIntakeMotor.set(ControlMode.PercentOutput, -.1);
+     * leftIntakeMotor.set(ControlMode.PercentOutput, -.1); Timer.delay(5);
+     * rightIntakeMotor.stopMotor(); leftIntakeMotor.stopMotor(); Timer.delay(2);
+     * rightIntakeMotor.set(ControlMode.PercentOutput, .1);
+     * leftIntakeMotor.set(ControlMode.PercentOutput, .1); }
+     */
+
 }

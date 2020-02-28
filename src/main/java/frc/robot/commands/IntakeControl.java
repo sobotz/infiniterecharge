@@ -7,24 +7,43 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class ReverseIntakeCommand extends InstantCommand {
+public class IntakeControl extends CommandBase {
     private final IntakeSubsystem m_intake;
+    private final DoubleSupplier controllerInput;
 
-    public ReverseIntakeCommand(IntakeSubsystem subsystem) {
+    /**
+     * Creates a new ReverseIntakeCommand.
+     */
+    public IntakeControl(IntakeSubsystem subsystem, DoubleSupplier controllerInput) {
         m_intake = subsystem;
-        addRequirements(m_intake);
+        this.controllerInput = controllerInput;
         // Use addRequirements() here to declare subsystem dependencies.
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        m_intake.reverseMotors();
+    }
+
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        m_intake.controlIntake(this.controllerInput.getAsDouble());
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

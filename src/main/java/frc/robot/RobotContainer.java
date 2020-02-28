@@ -11,11 +11,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.DeliverIntakeCommand;
 import frc.robot.commands.DifferentialDriveCommand;
 import frc.robot.commands.MoveToReflectiveTargetCommand;
 import frc.robot.commands.RhinoDriveCommand;
-import frc.robot.commands.ReverseIntakeCommand;
+import frc.robot.commands.IntakeControl;
 import frc.robot.commands.ShiftGearCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -45,7 +44,7 @@ public class RobotContainer {
     private final Preferences m_preferences;
 
     /* The driver's joystick. */
-    private final Joystick m_leftDriverJoystick, /*m_rightDriverJoystick, m_operatorJoystick,*/ m_buttonbox;
+    private final Joystick m_leftDriverJoystick, m_rightDriverJoystick, m_operatorJoystick, m_buttonbox;
 
     /* BEGIN COMMANDS */
 
@@ -58,6 +57,9 @@ public class RobotContainer {
     /* The current autonomous command for the robot. */
     private final MoveToReflectiveTargetCommand visionCommand;
 
+    /* A command used to control the intake. */
+    private final IntakeControl intakeControlCommand;
+
     /* END COMMANDS */
 
     public RobotContainer() {
@@ -66,7 +68,7 @@ public class RobotContainer {
         // the RIO
         this.m_preferences = Preferences.getInstance();
 
-        // Make a motor controller config for the drivetraini
+        // Make a motor controller config for the drivetrain
         MotorControllerConfiguration motorCfg = new MotorControllerConfiguration(
                 Constants.DriveConstants.LEFT_FRONT_MOTOR, Constants.DriveConstants.RIGHT_FRONT_MOTOR,
                 Constants.DriveConstants.LEFT_BACK_MOTOR, Constants.DriveConstants.RIGHT_BACK_MOTOR);
@@ -82,8 +84,8 @@ public class RobotContainer {
 
         // Set up the controllers for the teleop command
         this.m_leftDriverJoystick = new Joystick(0);
-        //this.m_rightDriverJoystick = new Joystick(1);
-        //this.m_operatorJoystick = new Joystick(2);
+        this.m_rightDriverJoystick = new Joystick(1);
+        this.m_operatorJoystick = new Joystick(2);
         this.m_buttonbox = new Joystick(3);
 
         // Set up the actual teleop command
@@ -101,6 +103,10 @@ public class RobotContainer {
         this.visionCommand = new MoveToReflectiveTargetCommand(this.m_drivetrain, this.m_vision,
                 MoveToReflectiveTargetCommand.Configuration.getDefault().applyPreferences(this.m_preferences));
 
+        // Setup a command to control the intake subsystem from, using the left driver
+        // joystick
+        this.intakeControlCommand = new IntakeControl(this.m_intake, () -> this.m_leftDriverJoystick.getRawAxis(1));
+
         // Configure the button bindings
         this.configureButtonBindings();
     }
@@ -110,16 +116,21 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         JoystickButton gearShiftButton = new JoystickButton(this.m_leftDriverJoystick, 1);
-        //JoystickButton gearShiftButtonRight = new JoystickButton(this.m_rightDriverJoystick, 1);
-        //JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 2);
-        //JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 3);
+        // JoystickButton gearShiftButtonRight = new
+        // JoystickButton(this.m_rightDriverJoystick, 1);
+        // JoystickButton deliverIntakeButton = new
+        // JoystickButton(this.m_operatorJoystick, 2);
+        // JoystickButton reverseIntakeButton = new
+        // JoystickButton(this.m_operatorJoystick, 3);
         JoystickButton activateVisionButton = new JoystickButton(this.m_buttonbox, 1);
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
-        //gearShiftButtonRight.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
+        // gearShiftButtonRight.toggleWhenPressed(new
+        // ShiftGearCommand(this.m_drivetrain));
 
-        //deliverIntakeButton.toggleWhenPressed(new DeliverIntakeCommand(this.m_intake));
-        //reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
+        // deliverIntakeButton.toggleWhenPressed(new
+        // DeliverIntakeCommand(this.m_intake));
+        // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
 
         activateVisionButton.toggleWhenPressed(this.visionCommand);
     }
