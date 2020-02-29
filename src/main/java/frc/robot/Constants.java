@@ -24,8 +24,8 @@ public final class Constants {
 		public static final int LEFT_BACK_MOTOR = 1;
 		public static final int RIGHT_FRONT_MOTOR = 2;
 		public static final int RIGHT_BACK_MOTOR = 3;
-		public static final int GEAR_SHIFT_DEPLOY = 0;
-		public static final int GEAR_SHIFT_RETRACT = 1;
+		public static final int GEAR_SHIFT_DEPLOY = 1;
+		public static final int GEAR_SHIFT_RETRACT = 0;
 
 		public static final double TURN_P = .02;
 		public static final double TURN_I = 0;
@@ -41,6 +41,7 @@ public final class Constants {
 		public static final int INTAKE_SOLENOID_DEPLOY = 2;
 		public static final int INTAKE_SOLENOID_RETRACT = 3;
 		public static final int INTAKE_MOTOR = 8;
+		public static final double MAXIMUM_INTAKE_SPEED = 0.4;
 	}
 
 	public static final class LauncherConstants {
@@ -121,4 +122,24 @@ public final class Constants {
 
 	public static final class OIConstants {
 	}
+
+    // Motors
+    public static final int DRIVETRAIN_RIGHT_FRONT_SPARK = 2;
+    public static final int DRIVETRAIN_LEFT_FRONT_SPARK = 1;
+    public static final int DRIVETRAIN_RIGHT_BACK_SPARK = 3;
+    public static final int DRIVETRAIN_LEFT_BACK_SPARK = 0;
+    //Serializer Motors
+    public static final int TOP_SERIALIZER_MOTOR = 0;
+    public static final int BOTTOM_SERIALIZER_MOTOR = 0;
+    public static final int SERIALIZER_MOTOR = 0; 
+    public static final int LAUNCHER_MOTOR = 0;
+    public static final int ROLLER_MOTOR = 0; //For use with Falcon 500
+
+    // Sensors
+    public static final int PHOTOELECTRIC_SENSOR_1 = 2;
+    public static final int PHOTOELECTRIC_SENSOR_2 = 0;
+    public static final int PHOTOELECTRIC_SENSOR_3 = 1;
+    // Controllers
+    public static final int JOYSTICK = 0;
+    public static final double LAUNCHER_VELOCITY_MS= 2.82;
 }

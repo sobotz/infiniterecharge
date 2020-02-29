@@ -507,9 +507,18 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
         this.cfg = cfg;
         this.state = new State(Constants.VisionConstants.TARGETLESS_FRAMES_TO_STOP);
 
+        // Keep the limelight's light off until the command is scheduled to run
+        this.m_vision.disableLimelight();
+
         // Drivetrain and vision subsystems need to be established in order for this
         // command to work
         addRequirements(drivetrain, vision);
+    }
+
+    @Override
+    public void initialize() {
+        // Turn the limelight light on once the command is scheduled
+        this.m_vision.enableLimelight();
     }
 
     /**
@@ -635,5 +644,8 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
         // Reset the command's state
         this.state = new State(Constants.VisionConstants.TARGETLESS_FRAMES_TO_STOP);
         this.state.hasInitialHeading = false;
+
+        // Once the command has terminated, disable the limelight's light
+        this.m_vision.disableLimelight();
     }
 }

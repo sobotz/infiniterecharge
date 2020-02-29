@@ -7,48 +7,56 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class DeliverIntakeCommand extends CommandBase {
-  private final IntakeSubsystem m_intake;
+    private final IntakeSubsystem m_intake;
+    private boolean done;
+    private boolean direction;
 
-  /**
-   * Creates a new DeliverIntakeCommand.
-   */
-  public DeliverIntakeCommand(IntakeSubsystem subsystem) {
-    m_intake = subsystem;
-    addRequirements(m_intake);
-    // Use addRequirements() here to declare subsystem dependencies.
-  }
+    /**
+     * Creates a new DeliverIntakeCommand.
+     */
+    public DeliverIntakeCommand(IntakeSubsystem subsystem) {
+        m_intake = subsystem;
+        this.done = false;
+        this.direction = true;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    if (m_intake.getIntakeDeliveryState()) {
-      m_intake.changeMotorState();
-      m_intake.deliverIntake();
-      m_intake.setIntakeDelivery(false);
-    } else {
-      m_intake.deliverIntake();
-      m_intake.changeMotorState();
-      m_intake.setIntakeDelivery(true);
+        addRequirements(m_intake);
+        // Use addRequirements() here to declare subsystem dependencies.
     }
-  }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-  }
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {
+        this.done = false;
+        this.direction = true;
+        this.m_intake.deliverIntake();
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-  }
+    public void setDirection(boolean direction) {
+        // Wait half a second to reverse the direction
+        Timer.delay(0.5);
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+        this.direction = direction;
+    }
+
+    public void execute() {
+        this.m_intake.runIntake(this.direction ? -1.0 : 1.0);
+    }
+
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        this.m_intake.retractIntake();
+        this.done = true;
+    }
+
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return this.done;
+    }
 }

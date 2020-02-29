@@ -16,11 +16,11 @@ import frc.robot.subsystems.DriveSubsystem.Type;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class TurnToAngle extends PIDCommand {
+public class TurnToRobotAngleCommand extends PIDCommand {
     /**
      * Creates a new TurnToAngle.
      */
-    public TurnToAngle(double targetAngleDegrees, DriveSubsystem driveSubsystem) {
+    public TurnToRobotAngleCommand(double targetAngleDegrees, DriveSubsystem driveSubsystem) {
         super(
                 // The controller that the command will use
                 new PIDController(DriveConstants.TURN_P, DriveConstants.TURN_I, DriveConstants.TURN_D),

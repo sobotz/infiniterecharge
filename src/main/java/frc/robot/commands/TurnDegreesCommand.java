@@ -10,16 +10,16 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class TurnDegrees extends SequentialCommandGroup {
+public class TurnDegreesCommand extends SequentialCommandGroup {
   /**
    * Creates a new TurnDegrees.
    */
   DriveSubsystem m_drive;
 
-  public TurnDegrees(double angle, DriveSubsystem subsystem) {
+  public TurnDegreesCommand(double angle, DriveSubsystem subsystem) {
     m_drive = subsystem;
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    addCommands(new ZeroNavxCommand(m_drive), new TurnToAngle(angle, m_drive));
+    addCommands(new ZeroNavxCommand(m_drive), new TurnToRobotAngleCommand(angle, m_drive));
   }
 }
