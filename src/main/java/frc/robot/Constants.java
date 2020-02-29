@@ -38,13 +38,12 @@ public final class Constants {
 	public static final class IntakeConstants {
 		public static final int INTAKE_SOLENOID_DEPLOY = 2;
 		public static final int INTAKE_SOLENOID_RETRACT = 3;
-		public static final int LEFT_INTAKE_MOTOR = 5;
-		public static final int RIGHT_INTAKE_MOTOR = 6;
+		public static final int INTAKE_MOTOR = 7;
 	}
 
 	public static final class LauncherConstants {
-		public static final int LAUNCHER_MOTOR_1 = 7;
-		public static final int LAUNCHER_MOTOR_2 = 8;
+		public static final int LAUNCHER_MOTOR_1 = 5;
+		public static final int LAUNCHER_MOTOR_2 = 6;
 	}
 
 	public static final class LiftConstants {
