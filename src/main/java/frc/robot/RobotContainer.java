@@ -16,6 +16,7 @@ import frc.robot.commands.MoveToReflectiveTargetCommand;
 import frc.robot.commands.RhinoDriveCommand;
 import frc.robot.commands.IntakeControl;
 import frc.robot.commands.ShiftGearCommand;
+import frc.robot.commands.DeliverIntakeCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -90,7 +91,7 @@ public class RobotContainer {
 
         // Set up the actual teleop command
         this.teleopCommand = new RhinoDriveCommand(this.m_drivetrain, () -> this.m_leftDriverJoystick.getRawAxis(1),
-                () -> this.m_leftDriverJoystick.getRawAxis(1)).applyPreferences(this.m_preferences);
+                () -> this.m_rightDriverJoystick.getRawAxis(1)).applyPreferences(this.m_preferences);
 
         // Set up an alternative teleop command that uses arcade drive; use just one
         // joystick
@@ -115,24 +116,19 @@ public class RobotContainer {
      * Activates bindings to the autonomous command from the button box.
      */
     private void configureButtonBindings() {
-        JoystickButton gearShiftButton = new JoystickButton(this.m_leftDriverJoystick, 1);
-        // JoystickButton gearShiftButtonRight = new
-        // JoystickButton(this.m_rightDriverJoystick, 1);
-        // JoystickButton deliverIntakeButton = new
-        // JoystickButton(this.m_operatorJoystick, 2);
-        // JoystickButton reverseIntakeButton = new
-        // JoystickButton(this.m_operatorJoystick, 3);
+        JoystickButton gearShiftButton = new JoystickButton(this.m_operatorJoystick, 1);
+        JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 2);
+        JoystickButton controlIntakeButton = new JoystickButton(this.m_operatorJoystick, 3);
         JoystickButton activateVisionButton = new JoystickButton(this.m_buttonbox, 1);
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
-        // gearShiftButtonRight.toggleWhenPressed(new
-        // ShiftGearCommand(this.m_drivetrain));
 
-        // deliverIntakeButton.toggleWhenPressed(new
-        // DeliverIntakeCommand(this.m_intake));
+        deliverIntakeButton.toggleWhenPressed(new DeliverIntakeCommand(this.m_intake));
+        controlIntakeButton.toggleWhenPressed(intakeControlCommand);
         // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
-
         activateVisionButton.toggleWhenPressed(this.visionCommand);
+
+        this.m_intake.setDefaultCommand(intakeControlCommand);
     }
 
     public Command getTeleopCommand() {
