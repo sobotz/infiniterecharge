@@ -35,6 +35,8 @@ public final class Constants {
 		public static final double TURN_TO_TOLERANCE = 4; // degrees per sec
 
 		public static final boolean GYRO_REVERSED = false;
+
+		public static final double DISTANCE_PER_PULSE= (64910.5/100)/2048;
 	}
 
 	public static final class IntakeConstants {
