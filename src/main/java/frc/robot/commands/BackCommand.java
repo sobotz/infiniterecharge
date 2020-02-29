@@ -8,15 +8,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Serializer;
+import frc.robot.subsystems.SerializerSubsystem;
 
 public class BackCommand extends CommandBase {
   /**
    * Creates a new backCommand.
    */
-  private Serializer serializer;
+  private SerializerSubsystem serializer;
 
-  public BackCommand(Serializer serializer1) {
+  public BackCommand(SerializerSubsystem serializer1) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.serializer = serializer1;
     addRequirements(serializer);

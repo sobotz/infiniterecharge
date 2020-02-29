@@ -49,6 +49,7 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
     }
 
     public void deliverIntake() {
+        this.runIntake(0.0);
         this.intakeDelivery.set(Value.kForward);
     }
 
@@ -57,7 +58,6 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
     }
 
     public void retractIntake() {
-        this.runIntake(0.0);
         this.intakeDelivery.set(Value.kReverse);
     }
 

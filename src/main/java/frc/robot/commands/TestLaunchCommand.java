@@ -9,16 +9,16 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Launcher;
-import frc.robot.subsystems.Serializer;
+import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.SerializerSubsystem;
 import frc.robot.Constants;
 
 public class TestLaunchCommand extends CommandBase {
 
-  private Serializer serializer;
-  private Launcher launcher;
+  private SerializerSubsystem serializer;
+  private LauncherSubsystem launcher;
 
-  public TestLaunchCommand(Serializer serializer1, Launcher launcher1) {
+  public TestLaunchCommand(SerializerSubsystem serializer1, LauncherSubsystem launcher1) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.serializer = serializer1;
     this.launcher = launcher1;

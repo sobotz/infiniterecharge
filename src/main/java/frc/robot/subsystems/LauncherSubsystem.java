@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
+/* Copyright (c) 2020 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,40 +7,50 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.LauncherConstants;
-import frc.robot.common.Preferences;
 
-public class LauncherSubsystem extends SubsystemBase implements Preferences.Group {
-    WPI_TalonFX launcherMotor1;
-    WPI_TalonFX launcherMotor2;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-    /**
-     * Creates a new ExampleSubsystem.
-     */
+public class LauncherSubsystem extends SubsystemBase {
 
-    public LauncherSubsystem() {
-        launcherMotor1 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_1);
-        launcherMotor2 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_2);
+  /**
+   * Creates a new Launcher.
+   */
 
-        launcherMotor1.configFactoryDefault();
-        launcherMotor2.configFactoryDefault();
-    }
+  public WPI_TalonFX launcherMotor;
+  public WPI_TalonFX launcherMotor2;
+  WPI_TalonSRX feedMotor;
 
-    /**
-     * Gets the name of the preferences group.
-     * 
-     * @return the name of the preferences group
-     */
-    @Override
-    public String groupName() {
-        return "launcher";
-    }
+  public LauncherSubsystem() {
+    launcherMotor = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_1);
+    launcherMotor2 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_2);
+    feedMotor = new WPI_TalonSRX(Constants.ROLLER_MOTOR);
 
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
+    launcherMotor.configFactoryDefault();
+    launcherMotor2.configFactoryDefault();
+    feedMotor.configFactoryDefault();
+  }
 
-    }
+  public void startRollers() {
+    feedMotor.set(ControlMode.PercentOutput, 1.00);
+  }
+
+  public void stopRollers() {
+    feedMotor.set(ControlMode.PercentOutput, 0);
+  }
+
+  public void startLauncher() {
+    launcherMotor.set(ControlMode.PercentOutput, 1.00);
+    launcherMotor2.follow(launcherMotor);
+    launcherMotor2.setInverted(true);
+  }
+
+  public void stopLauncher() {
+    launcherMotor.set(ControlMode.Velocity, 0);
+    launcherMotor2.set(ControlMode.Velocity, 0);
+  }
 }

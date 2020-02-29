@@ -7,47 +7,49 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Launcher;
-import frc.robot.subsystems.Serializer;
-import frc.robot.Constants;
+import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.SerializerSubsystem;
 
 public class LaunchAllCommand extends CommandBase {
-
-  private Serializer serializer;
-  private Launcher launcher;
+  private SerializerSubsystem serializer;
+  private LauncherSubsystem launcher;
+  private int nFramesRun;
 
   /**
    * Creates a new LaunchAllCommand.
    */
-  public LaunchAllCommand(Serializer serializer1, Launcher launcher1) {
+  public LaunchAllCommand(SerializerSubsystem serializer1, LauncherSubsystem launcher1) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.serializer = serializer1;
     this.launcher = launcher1;
-    addRequirements(serializer);
-    addRequirements(launcher);
+    this.nFramesRun = 0;
+    addRequirements(serializer, launcher);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    this.nFramesRun = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.serializer.moveBeltsForward();
+    //this.serializer.moveBeltsForward();
+    this.launcher.startRollers();
     this.launcher.startLauncher();
 
-    while (this.serializer.ballCount != 0) {
-      this.launcher.stopRollers();
-      while (this.launcher.launcherMotor.getSelectedSensorVelocity() !=  Constants.LAUNCHER_VELOCITY_MS) {
-        Timer.delay(0.01); //check
-      }
-      this.launcher.startRollers();
-      Timer.delay(0.2); //check
-    }
+    this.nFramesRun++;
+
+    // while (this.serializer.ballCount != 0) {
+    //   this.launcher.stopRollers();
+    //   while (this.launcher.launcherMotor.getSelectedSensorVelocity() !=  Constants.LAUNCHER_VELOCITY_MS) {
+    //     Timer.delay(0.01); //check
+    //   }
+    //   this.launcher.startRollers();
+    //   Timer.delay(0.2); //check
+    // }
  
   }
 
@@ -56,14 +58,12 @@ public class LaunchAllCommand extends CommandBase {
   public void end(boolean interrupted) {
     this.launcher.stopRollers();
     this.launcher.stopLauncher();
+    this.nFramesRun = 0;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-     if(this.serializer.ballCount <= 0){
-    return true;  
-    }
-    return false;
+     return this.nFramesRun > 500;
   }
 }
