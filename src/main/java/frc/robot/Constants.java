@@ -24,6 +24,15 @@ public final class Constants {
 		public static final int RIGHT_BACK_MOTOR = 3;
 		public static final int GEAR_SHIFT_DEPLOY = 0;
 		public static final int GEAR_SHIFT_RETRACT = 1;
+
+		public static final double TURN_P = .02;
+		public static final double TURN_I = 0;
+		public static final double TURN_D = 0;
+
+		public static final double TURN_RATE_TOLERANCE = 4; // degrees
+		public static final double TURN_TO_TOLERANCE = 4; // degrees per sec
+
+		public static final boolean GYRO_REVERSED = false;
 	}
 
 	public static final class IntakeConstants {

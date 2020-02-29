@@ -1,14 +1,16 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.common.Preferences;
 
 /**
@@ -85,6 +87,9 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
     /* The pneumatic doulbe solenoid used to shift gears. */
     private DoubleSolenoid gearShifter;
 
+    /* The navx interface. */
+    private final AHRS ahrs;
+
     /**
      * Initializes a new DriveSubsystem.
      */
@@ -94,6 +99,7 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
         this.hasShifted = false;
         this.gearShifter = new DoubleSolenoid(Constants.DriveConstants.GEAR_SHIFT_DEPLOY,
                 Constants.DriveConstants.GEAR_SHIFT_RETRACT);
+        this.ahrs = new AHRS(SPI.Port.kMXP);
     }
 
     /**
@@ -127,5 +133,13 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
         this.gearShifter.set(this.hasShifted ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
 
         return !this.hasShifted;
+    }
+
+    public double getHeading() {
+        return Math.IEEEremainder(ahrs.getAngle(), 360) * (DriveConstants.GYRO_REVERSED ? -1.0 : 1.0);
+    }
+
+    public void zeroHeading() {
+        ahrs.zeroYaw();
     }
 }
