@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DifferentialDriveCommand;
 import frc.robot.commands.MoveToReflectiveTargetCommand;
-import frc.robot.commands.RhinoDriveCommand;
 import frc.robot.commands.IntakeControl;
 import frc.robot.commands.ShiftGearCommand;
 import frc.robot.commands.DeliverIntakeCommand;
@@ -45,12 +44,9 @@ public class RobotContainer {
     private final Preferences m_preferences;
 
     /* The driver's joystick. */
-    private final Joystick m_leftDriverJoystick, m_rightDriverJoystick, m_operatorJoystick, m_buttonbox;
+    private final Joystick m_leftDriverJoystick, m_operatorJoystick;
 
     /* BEGIN COMMANDS */
-
-    /* The current teleOp command for the robot. */
-    private final RhinoDriveCommand teleopCommand;
 
     /* A fallback teleOp command for the robot (arcade drive). */
     private final DifferentialDriveCommand fallbackTeleopCommand;
@@ -85,13 +81,7 @@ public class RobotContainer {
 
         // Set up the controllers for the teleop command
         this.m_leftDriverJoystick = new Joystick(0);
-        this.m_rightDriverJoystick = new Joystick(1);
-        this.m_operatorJoystick = new Joystick(2);
-        this.m_buttonbox = new Joystick(3);
-
-        // Set up the actual teleop command
-        this.teleopCommand = new RhinoDriveCommand(this.m_drivetrain, () -> this.m_leftDriverJoystick.getRawAxis(1),
-                () -> this.m_rightDriverJoystick.getRawAxis(1)).applyPreferences(this.m_preferences);
+        this.m_operatorJoystick = new Joystick(1);
 
         // Set up an alternative teleop command that uses arcade drive; use just one
         // joystick
@@ -119,7 +109,7 @@ public class RobotContainer {
         JoystickButton gearShiftButton = new JoystickButton(this.m_operatorJoystick, 1);
         JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 2);
         JoystickButton controlIntakeButton = new JoystickButton(this.m_operatorJoystick, 3);
-        JoystickButton activateVisionButton = new JoystickButton(this.m_buttonbox, 1);
+        JoystickButton activateVisionButton = new JoystickButton(this.m_operatorJoystick, 4);
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
 
@@ -132,11 +122,6 @@ public class RobotContainer {
     }
 
     public Command getTeleopCommand() {
-        // If rhino drive isn't explicitly enabled, use the standard differential drive
-        if (this.m_preferences.getBoolean(this.m_drivetrain.preferencesKey("useRhino").toString(), false)) {
-            return this.teleopCommand;
-        }
-
         // Use differential drive
         return this.fallbackTeleopCommand;
     }
