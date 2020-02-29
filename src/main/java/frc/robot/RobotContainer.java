@@ -118,7 +118,7 @@ public class RobotContainer {
         // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
         activateVisionButton.toggleWhenPressed(this.visionCommand);
 
-        this.m_intake.setDefaultCommand(intakeControlCommand);
+        //this.m_intake.setDefaultCommand(intakeControlCommand);
     }
 
     public Command getTeleopCommand() {

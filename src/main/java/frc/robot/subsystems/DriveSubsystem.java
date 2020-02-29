@@ -129,8 +129,13 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
      * @return the previous value (shifted or not)
      */
     public boolean shiftGear() {
-        this.hasShifted = !this.hasShifted;
-        this.gearShifter.set(this.hasShifted ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+        if (this.hasShifted) {
+            gearShifter.set(DoubleSolenoid.Value.kForward);
+            this.hasShifted = false;
+        } else {
+            gearShifter.set(DoubleSolenoid.Value.kReverse);
+            this.hasShifted = true;
+        }
 
         return !this.hasShifted;
     }

@@ -22,8 +22,8 @@ public final class Constants {
 		public static final int LEFT_BACK_MOTOR = 1;
 		public static final int RIGHT_FRONT_MOTOR = 2;
 		public static final int RIGHT_BACK_MOTOR = 3;
-		public static final int GEAR_SHIFT_DEPLOY = 0;
-		public static final int GEAR_SHIFT_RETRACT = 1;
+		public static final int GEAR_SHIFT_DEPLOY = 1;
+		public static final int GEAR_SHIFT_RETRACT = 0;
 
 		public static final double TURN_P = .02;
 		public static final double TURN_I = 0;
