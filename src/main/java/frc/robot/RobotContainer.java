@@ -11,15 +11,14 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.DeliverIntakeCommand;
 import frc.robot.commands.DifferentialDriveCommand;
 import frc.robot.commands.MoveToReflectiveTargetCommand;
-import frc.robot.commands.IntakeControl;
 import frc.robot.commands.ShiftGearCommand;
-import frc.robot.commands.DeliverIntakeCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.DriveSubsystem.MotorControllerConfiguration;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
-import frc.robot.subsystems.DriveSubsystem.MotorControllerConfiguration;
 import frc.robot.subsystems.VisionSubsystem.LimelightConfiguration;
 
 /**
@@ -55,7 +54,7 @@ public class RobotContainer {
     private final MoveToReflectiveTargetCommand visionCommand;
 
     /* A command used to control the intake. */
-    private final IntakeControl intakeControlCommand;
+    private final DeliverIntakeCommand intakeControlCommand;
 
     /* END COMMANDS */
 
@@ -96,7 +95,7 @@ public class RobotContainer {
 
         // Setup a command to control the intake subsystem from, using the left driver
         // joystick
-        this.intakeControlCommand = new IntakeControl(this.m_intake, () -> this.m_leftDriverJoystick.getRawAxis(1));
+        this.intakeControlCommand = new DeliverIntakeCommand(this.m_intake);
 
         // Configure the button bindings
         this.configureButtonBindings();
@@ -108,13 +107,18 @@ public class RobotContainer {
     private void configureButtonBindings() {
         JoystickButton gearShiftButton = new JoystickButton(this.m_operatorJoystick, 1);
         JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 2);
-        JoystickButton controlIntakeButton = new JoystickButton(this.m_operatorJoystick, 3);
         JoystickButton activateVisionButton = new JoystickButton(this.m_operatorJoystick, 4);
+        JoystickButton activateIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
+        JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 6);
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
 
-        deliverIntakeButton.toggleWhenPressed(new DeliverIntakeCommand(this.m_intake));
-        controlIntakeButton.toggleWhenPressed(intakeControlCommand);
+        deliverIntakeButton.toggleWhenPressed(this.intakeControlCommand);
+        
+        // When the left bumper button is pressed, reverse the intake
+        reverseIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(false));
+        activateIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(true));
+
         // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
         activateVisionButton.toggleWhenPressed(this.visionCommand);
 

@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.common.Preferences;
@@ -18,7 +19,6 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
     WPI_TalonSRX intakeTalon;
 
     private DoubleSolenoid intakeDelivery;
-    private boolean intakeDeliveryState = false;
 
     /**
      * Creates a new ExampleSubsystem.
@@ -31,7 +31,6 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
                 IntakeConstants.INTAKE_SOLENOID_RETRACT);
 
         intakeTalon.configFactoryDefault();
-
     }
 
     /**
@@ -47,35 +46,19 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-
     }
 
     public void deliverIntake() {
-        if (intakeDeliveryState) {
-            intakeDelivery.set(DoubleSolenoid.Value.kForward);
-        } else {
-            intakeDelivery.set(DoubleSolenoid.Value.kReverse);
-        }
+        this.intakeDelivery.set(Value.kForward);
     }
 
-    public void changeMotorState() {
-        if (intakeDeliveryState) {
-            intakeTalon.stopMotor();
-        } else {
-            intakeTalon.set(ControlMode.PercentOutput, .1);
-        }
+    public void runIntake(double speed) {
+        this.intakeTalon.set(ControlMode.PercentOutput, speed * IntakeConstants.MAXIMUM_INTAKE_SPEED);
     }
 
-    public boolean getIntakeDeliveryState() {
-        return intakeDeliveryState;
-    }
-
-    public void setIntakeDelivery(boolean state) {
-        intakeDeliveryState = state;
-    }
-
-    public void controlIntake(double intakeSpeed) {
-        intakeTalon.set(ControlMode.PercentOutput, intakeSpeed);
+    public void retractIntake() {
+        this.runIntake(0.0);
+        this.intakeDelivery.set(Value.kReverse);
     }
 
     /*

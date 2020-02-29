@@ -157,6 +157,22 @@ public class VisionSubsystem extends SubsystemBase implements Group {
     }
 
     /**
+     * Turns on the limelight's camera.
+     */
+    public void enableLimelight() {
+        this.limelightConfiguration.ledMode = LEDMode.ON;
+        this.limelightConfiguration.applySettings(this.limelightTable);
+    }
+
+    /**
+     * Turns off the limelight's camera.
+     */
+    public void disableLimelight() {
+        this.limelightConfiguration.ledMode = LEDMode.OFF;
+        this.limelightConfiguration.applySettings(this.limelightTable);
+    }
+
+    /**
      * Gets the name of the preferences group.
      * 
      * @return the name of the preferences group
