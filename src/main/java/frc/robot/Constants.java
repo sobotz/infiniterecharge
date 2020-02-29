@@ -13,7 +13,7 @@ import frc.robot.subsystems.VisionSubsystem.LEDMode;
  * Constants holds a list of robot-wide constant definitions.
  */
 public final class Constants {
-    public static final int MYSERY_MOTOR = 9;
+    public static final int MISERY_MOTOR = 9;
 
 	public static final class ControlPanelConstants {
 		public static final int CONTROL_PANEL_MOTOR = 4;
@@ -124,4 +124,24 @@ public final class Constants {
 
 	public static final class OIConstants {
 	}
+
+    // Motors
+    public static final int DRIVETRAIN_RIGHT_FRONT_SPARK = 2;
+    public static final int DRIVETRAIN_LEFT_FRONT_SPARK = 1;
+    public static final int DRIVETRAIN_RIGHT_BACK_SPARK = 3;
+    public static final int DRIVETRAIN_LEFT_BACK_SPARK = 0;
+    //Serializer Motors
+    public static final int TOP_SERIALIZER_MOTOR = 0;
+    public static final int BOTTOM_SERIALIZER_MOTOR = 0;
+    public static final int SERIALIZER_MOTOR = 0; 
+    public static final int LAUNCHER_MOTOR = 0;
+    public static final int ROLLER_MOTOR = 0; //For use with Falcon 500
+
+    // Sensors
+    public static final int PHOTOELECTRIC_SENSOR_1 = 2;
+    public static final int PHOTOELECTRIC_SENSOR_2 = 0;
+    public static final int PHOTOELECTRIC_SENSOR_3 = 1;
+    // Controllers
+    public static final int JOYSTICK = 0;
+    public static final double LAUNCHER_VELOCITY_MS= 2.82;
 }
