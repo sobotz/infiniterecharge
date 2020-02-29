@@ -13,7 +13,7 @@ import frc.robot.subsystems.VisionSubsystem.LEDMode;
  * Constants holds a list of robot-wide constant definitions.
  */
 public final class Constants {
-    public static final int MYSERY_MOTOR = 9;
+    public static final int MISERY_MOTOR = 9;
 
 	public static final class ControlPanelConstants {
 		public static final int CONTROL_PANEL_MOTOR = 4;
