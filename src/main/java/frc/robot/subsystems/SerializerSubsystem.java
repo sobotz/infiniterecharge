@@ -89,6 +89,7 @@ public class SerializerSubsystem extends SubsystemBase {
     }
 
     // Called every time the Command Scheduler runs (every 20 miliseconds)
+    @Override
     public void periodic() {
         // The index of the ball that is furthest lodged in the serializer
         int ball = this.balls.size() - 1;
@@ -119,7 +120,7 @@ public class SerializerSubsystem extends SubsystemBase {
                 } else {
                     // This ball hasn't been seen before, and is entering for the first time
                     Ball newBall = new Ball();
-                    this.balls.add(newBall);
+                    this.balls.add(0, newBall);
                 }
             }
 
