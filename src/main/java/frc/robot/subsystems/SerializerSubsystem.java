@@ -30,9 +30,6 @@ public class SerializerSubsystem extends SubsystemBase {
     /* Whether or not the serializer can accept any more balls (is it at capacity?). */
     private boolean acceptingBalls = true;
 
-    /* The current sensor sample number until the ball count resets to 0. */
-    private int frame = 0;
-
     /* The balls that have passed into the serializer. */
     private ArrayList<Ball> balls;
 
@@ -46,18 +43,11 @@ public class SerializerSubsystem extends SubsystemBase {
         /* The last sensor tripped by the ball. */
         int currentSensor;
 
-        /* The frame at which the ball came into the serializer. */
-        int birthFrame;
-
         /**
-         * Initializes a new Ball, considering the current frame number.
-         * This "frame number" simply represents the index of the ball in the last set of non-empty sensor samples.
-         *
-         * @param currentFrame the sample # on which this ball was detected by the first sensor (when was the first sensor tripped by this ball?)
+         * Initializes a new Ball.
          **/
-        Ball(int currentFrame) {
+        Ball() {
             this.sensorTripped = new HashMap<Integer, Boolean>();
-            this.birthFrame = currentFrame;
 
             // Since the ball has been detected, it must have been detected by the first sensor at least
             this.currentSensor = 0;
@@ -125,10 +115,10 @@ public class SerializerSubsystem extends SubsystemBase {
             } else {
                 if (ball >= 0 && ball < this.balls.size()) {
                     // Trip the sensor
-                    this.balls.get(ball).tripSensor(i); 
+                    this.balls.get(ball).tripSensor(i);
                 } else {
                     // This ball hasn't been seen before, and is entering for the first time
-                    Ball newBall = new Ball(this.frame);
+                    Ball newBall = new Ball();
                     this.balls.add(newBall);
                 }
             }
@@ -136,8 +126,10 @@ public class SerializerSubsystem extends SubsystemBase {
             ball--;
         }
 
-        this.frame++;
-        this.moveBeltsForward();
+        // If there are balls in the serializer, start moving the belts
+        if (this.balls.size() > 0) {
+            this.moveBeltsForward();
+        }
     }
 
     /**
