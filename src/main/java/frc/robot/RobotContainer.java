@@ -121,19 +121,31 @@ public class RobotContainer {
      * Activates bindings to the autonomous command from the button box.
      */
     private void configureButtonBindings() {
-        JoystickButton gearShiftButton = new JoystickButton(this.m_operatorJoystick, 1);
-        JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 2);
-        JoystickButton activateVisionButton = new JoystickButton(this.m_operatorJoystick, 4);
-        JoystickButton activateIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
-        JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 6);
+        JoystickButton gearShiftButton = new JoystickButton(this.m_leftDriverJoystick, 1);
+        JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 1);
+        // Changed to A
+        JoystickButton activateVisionButton = new JoystickButton(this.m_operatorJoystick, 3);
+        // Changed to X
+        // JoystickButton activateIntakeButton = new JoystickButton(this.m_operatorJoystick, 6);
+        // Changed to left trigger (raw axis)
+        JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
+        // Change to left bumper
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
+
+        if (this.m_operatorJoystick.getRawAxis(2) > 0) {
+            this.intakeControlCommand.setDirection(true);
+        }
+
+        if (this.m_operatorJoystick.getRawAxis(3) > 0) {
+            // Serializer
+        }
 
         deliverIntakeButton.toggleWhenPressed(this.intakeControlCommand);
 
         // When the left bumper button is pressed, reverse the intake
         reverseIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(false));
-        activateIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(true));
+        // activateIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(true));
 
         // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
         activateVisionButton.toggleWhenPressed(this.visionCommand);
@@ -142,7 +154,7 @@ public class RobotContainer {
         //JoystickButton ballPrep = new JoystickButton(this.m_leftDriverJoystick, 1);
         //ballPrep.toggleWhenPressed(this.m_testLaunchCommand);
 
-        JoystickButton ballsOut = new JoystickButton(this.m_operatorJoystick, 7);
+        JoystickButton ballsOut = new JoystickButton(this.m_operatorJoystick, 6);
         ballsOut.toggleWhenPressed(this.launchCommand);
 
         // this.m_intake.setDefaultCommand(intakeControlCommand);
