@@ -151,4 +151,10 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
     public double inchesToTalon(double inches){
         return inches * (Constants.DriveConstants.inchToTalon);
     }
+
+    // driveto
+    // let encodercount = inchesToTalon(distance);
+    // if (current encoder count < encodercount) {
+    //    robot.differentialDrive(differntial, 0.4, 0.4);
+    //}
 }
