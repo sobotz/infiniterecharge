@@ -169,4 +169,13 @@ public class SerializerSubsystem extends SubsystemBase {
         // The sensor is only triggered if its voltage is less than the provided threshold
         return this.sensors[sensor].getVoltage() < .85;
     }
+
+    /**
+     * Gets the number of balls stored in the serializer.
+     *
+     * @return the number of balls in the serializer
+     **/
+    public int numBalls() {
+        return this.balls.size();
+    }
 }
