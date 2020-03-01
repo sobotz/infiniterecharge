@@ -104,7 +104,7 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
 
     /**
      * Gets the name of the preferences group.
-     * 
+     *
      * @return the name of the preferences group
      */
     @Override
@@ -125,25 +125,31 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
 
     /**
      * Shifts the gear value associated with the drivetrain pneumatically.
-     * 
+     *
      * @return the previous value (shifted or not)
      */
     public boolean shiftGear() {
-        if (this.hasShifted) {
-            gearShifter.set(DoubleSolenoid.Value.kForward);
-            this.hasShifted = false;
-        } else {
-            gearShifter.set(DoubleSolenoid.Value.kReverse);
-            this.hasShifted = true;
-        }
+        // If we have already shifted, unshift
+        gearShifter.set(this.hasShifted ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
+
+        // Invert the state of the shift
+        this.hasShifted = !this.hasShifted;
 
         return !this.hasShifted;
     }
 
+    /**
+     * Gets the rotational heading of the Robot's drivetrain.
+     *
+     * @return the rotational heading of the robot
+     */
     public double getHeading() {
         return Math.IEEEremainder(ahrs.getAngle(), 360) * (DriveConstants.GYRO_REVERSED ? -1.0 : 1.0);
     }
 
+    /**
+     * Sets the rotational heading of the Robot's drivetrain to zero.
+     **/
     public void zeroHeading() {
         ahrs.zeroYaw();
     }

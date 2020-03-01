@@ -12,137 +12,159 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Timer;
-//import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-//import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.SerializerConstants;
 
+import java.util.HashMap;
+import java.util.ArrayList;
+
 public class SerializerSubsystem extends SubsystemBase {
-  /**
-   * Creates a new Serializer.
-   */
-  WPI_TalonSRX serializerMotor1;
-  //WPI_TalonSRX serializerMotor2;
-  // WPI_TalonFX serializerMotor; For use with Falcon 500
+    /* The motor used to control the belts. */
+    WPI_TalonSRX serializerMotor;
 
-  // Initializes the sensors in the serializer and launcher
-  public AnalogInput serializerSensor1;
-  public AnalogInput serializerSensor2;
-  public AnalogInput launcherSensor;
+    /* The sensors triggered in the serializer. */
+    private AnalogInput[] sensors;
 
-  // Initializes variables that wiil be used in the program
-  public double ballCount = 0.0;
-  public boolean acceptingBalls = true;
-  public boolean previousLSValue = false; // previous launcher sensor value
-  public boolean previousSSValue = false; // previous serializer sensor value
-  public boolean serializerSensor1Value; // first sensor true means ball
-  public boolean serializerSensor2Value; // sec sensor
-  public double previousBallCount;
+    /* Whether or not the serializer can accept any more balls (is it at capacity?). */
+    private boolean acceptingBalls = true;
 
-  public SerializerSubsystem() {
-    // instantiates sensor values with respect to the contants method
-    serializerSensor1 = new AnalogInput(Constants.PHOTOELECTRIC_SENSOR_1);
-    serializerSensor2 = new AnalogInput(Constants.PHOTOELECTRIC_SENSOR_2);
-    launcherSensor = new AnalogInput(Constants.PHOTOELECTRIC_SENSOR_3);
-    //ballCount = SmartDashboard.getNumber("Ball Count: ", 0);
-    previousBallCount = 0;
+    /* The current sensor sample number until the ball count resets to 0. */
+    private int frame = 0;
 
-    
-    this.serializerMotor1 = new WPI_TalonSRX(SerializerConstants.SERIALIZER_MOTOR);
-    serializerMotor1.configFactoryDefault();
-    
-    // serializerMotor = new WPI_TalonFX(Constants.SERIALIZER_MOTOR);
-  }
+    /* The balls that have passed into the serializer. */
+    private ArrayList<Ball> balls;
 
-  
-  // Called every time the Command Scheduler runs (every 20 miliseconds)
-  public void periodic() {
-    // Recieves possible user input from the smart dashboard
-    //ballCount = SmartDashboard.getNumber("Ball Count", ballCount);
-    // outputs current value to the smart dashboard
-    //System.out.println("running periodic: " + serializerSensor1.getVoltage());
-    // Puts sensor voltage values on the Smart dashboard
-    //SmartDashboard.putNumber("Sensor 1: ", serializerSensor1.getVoltage()); // true
-    //SmartDashboard.putNumber("Sensor 2: ", serializerSensor2.getVoltage()); // true
+    /**
+     * Ball is an abstract representation of an object that might occupy a sensor at a point in time.
+     **/
+    private static class Ball {
+        /* Whether or not a particular sensors has been tripped by the ball. */
+        HashMap<Integer, Boolean> sensorTripped;
 
-    if (!previousSSValue && serializerSensor2.getVoltage() < .85 && acceptingBalls) {
-      ballCount++;
-      // update ballCount
-      //ballCount = SmartDashboard.getNumber("Ball Count", ballCount);
-      //SmartDashboard.putNumber("Ball Count: ", ballCount);
-      previousSSValue = true;
-    }
+        /* The last sensor tripped by the ball. */
+        int currentSensor;
 
-    acceptingBalls = ballCount < 5; //Took out >= 0 because we should still be able to accept balls even when negative
-/*
-    if (acceptingBalls) {
-      if (serializerSensor2Value) {
-        if (previousBallCount == ballCount) {
-          // adds one to the ball count
-          ballCount++;
-          // updates ballcount on smart dashboard
-          ballCount = SmartDashboard.getNumber("Ball Count", ballCount);
-          SmartDashboard.putNumber("Ball Count", ballCount);
+        /* The frame at which the ball came into the serializer. */
+        int birthFrame;
+
+        /**
+         * Initializes a new Ball, considering the current frame number.
+         * This "frame number" simply represents the index of the ball in the last set of non-empty sensor samples.
+         *
+         * @param currentFrame the sample # on which this ball was detected by the first sensor (when was the first sensor tripped by this ball?)
+         **/
+        Ball(int currentFrame) {
+            this.sensorTripped = new HashMap<Integer, Boolean>();
+            this.birthFrame = currentFrame;
+
+            // Since the ball has been detected, it must have been detected by the first sensor at least
+            this.currentSensor = 0;
+            this.sensorTripped.put(0, true);
         }
-      } else { 
-        previousBallCount = ballCount;
-      }
+
+        /**
+         * Registers that the ball has tripped the given sensor. If the sensor is out of range of the 3 serializer sensors, false is returned.
+         *
+         * @param sensor the sensor that should be tripped
+         * @return whether or not the provided sensor is in range of the 3 serializer sensors
+         **/
+        boolean tripSensor(int sensor) {
+            // If the sensor is out of range, return false
+            if (sensor > 2) {
+                return false;
+            }
+
+            // Trip the sensor
+            this.sensorTripped.put(sensor, true);
+
+            return true;
+        }
     }
-*/
-    if (launcherSensor.getVoltage() < 0.85) {
-      if (ballCount > 0 && !previousLSValue) {
-        // decrement ballCount by 1
-        ballCount--;
-        // update ballCount
-        //SmartDashboard.putNumber("Ball Count: ", ballCount);
-      previousLSValue = true;
-      }
+
+    /**
+     * Creates a new Serializer.
+     */
+    public SerializerSubsystem() {
+        // instantiates sensor values with respect to the contants method
+        this.sensors = new AnalogInput[] { new AnalogInput(Constants.PHOTOELECTRIC_SENSOR_1), new AnalogInput(Constants.PHOTOELECTRIC_SENSOR_2), new AnalogInput(Constants.PHOTOELECTRIC_SENSOR_3) };
+
+        // Create a new motor that we'll use to move the projectiles with, considering a port provided in the constants file
+        this.serializerMotor = new WPI_TalonSRX(SerializerConstants.SERIALIZER_MOTOR);
+        this.serializerMotor.configFactoryDefault();
+
+        // Create a new ArrayList to store the balls that are inside the serializer.
+        this.balls = new ArrayList<Ball>();
     }
 
-    if (serializerSensor1.getVoltage() < .85 && acceptingBalls) {
-      serializerMotor1.set(ControlMode.PercentOutput, -SerializerConstants.SERIALIZER_SPEED);
-      //SmartDashboard.putBoolean("Belts On: ", true);
-    } else {
-      serializerMotor1.set(ControlMode.PercentOutput, 0);
-      //SmartDashboard.putBoolean("Belts On: ", false);
+    // Called every time the Command Scheduler runs (every 20 miliseconds)
+    public void periodic() {
+        // The index of the ball that is furthest lodged in the serializer
+        int ball = this.balls.size() - 1;
+
+        // Work our way down from the last sensor in the serializer
+        for (int i = this.sensors.length - 1; i >= 0; i--) {
+            // If there is no ball in front of the sensor, this means that there:
+            // a. was no ball, and continues to be no ball in front of the sensor
+            // or that there
+            // b. was a ball in front of the sensor, but no longer
+            if (!this.sensorTriggered(i)) {
+                if (ball >= 0 && ball < this.balls.size()) {
+                    // Get the index of the ball that would have been in this spot
+                    Ball formerBall = this.balls.get(ball);
+
+                    // If there was in fact a ball most ready to pop out, and it was once in front of this sensor, that means it has moved past this sensor
+                    if (formerBall != null && formerBall.sensorTripped.get(i)) {
+                        // Trip the next sensor, and pop the ball from the queue if necessary
+                        if (!formerBall.tripSensor(i + 1)) {
+                            this.balls.remove(this.balls.size() - 1);
+                        }
+                    }
+                }
+            } else {
+                if (ball >= 0 && ball < this.balls.size()) {
+                    // Trip the sensor
+                    this.balls.get(ball).tripSensor(i); 
+                } else {
+                    // This ball hasn't been seen before, and is entering for the first time
+                    Ball newBall = new Ball(this.frame);
+                    this.balls.add(newBall);
+                }
+            }
+
+            ball--;
+        }
+
+        this.frame++;
+        this.moveBeltsForward();
     }
-    ballCount = SmartDashboard.getNumber("Ball Count", ballCount);
-    //SmartDashboard.putNumber("Ball Count", ballCount);
 
-  }
-
-  public void moveBeltsForward() {
-    // accepting balls is set to false to stop incorrect ball placement in the
-    // serializer
-    acceptingBalls = false;
-    // turns serializer motor on
-    serializerMotor1.set(ControlMode.PercentOutput, -0.5);
-    // lets us know if the belts are running
-    //SmartDashboard.putBoolean("Belts On: ", true);
-    // changes the amount of time moved forward based on the ball count
-    Timer.delay(0.5); //check
-    // turns serializer motor on
-    serializerMotor1.set(ControlMode.PercentOutput, 0);
-    // outputs belt state to the smart dashboard
-    //SmartDashboard.putBoolean("Belts On: ", false);
-  }
-
-  public void moveBack() {
-    // runs belts until sensor at the start of the serializer is triggered
-    if (serializerSensor2.getVoltage() < .85) {
-      // starts belts in inverse
-      serializerMotor1.set(ControlMode.PercentOutput, -SerializerConstants.SERIALIZER_SPEED);
-      //SmartDashboard.putBoolean("Belts On: ", true);
-    } else {
-     // stops belts
-    serializerMotor1.set(ControlMode.PercentOutput, 0);
-    // outputs belt states to the smart dashboard
-    //SmartDashboard.putBoolean("Belts On: ", false);
-    // allows balls to be intaken again
-    acceptingBalls = true; 
+    /**
+     * Runs the serializer belt.
+     **/
+    public void moveBeltsForward() {
+        // turns serializer motor on
+        serializerMotor.set(ControlMode.PercentOutput, -0.5);
     }
-  }
 
+    /**
+     * Determines whether or not the serializer can accept more balls.
+     *
+     * @return whether or not the serializer can accept more balls
+     **/
+    public boolean canAcceptBalls() {
+        // The serializer can hold 5 balls, at max
+        return this.balls.size() < 5;
+    }
+
+    /**
+     * Determines whether or not a particular sensor has been triggered.
+     *
+     * @return whether or not the sensor has been triggered
+     **/
+    public boolean sensorTriggered(int sensor) {
+        // The sensor is only triggered if its voltage is less than the provided threshold
+        return this.sensors[sensor].getVoltage() < .85;
+    }
 }

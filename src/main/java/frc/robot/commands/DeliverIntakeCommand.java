@@ -33,7 +33,7 @@ public class DeliverIntakeCommand extends CommandBase {
     public void initialize() {
         this.done = false;
         this.direction = true;
-        this.m_intake.retractIntake();
+        this.m_intake.dropIntake();
     }
 
     public void setDirection(boolean direction) {
@@ -50,7 +50,7 @@ public class DeliverIntakeCommand extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        this.m_intake.deliverIntake();
+        this.m_intake.pullIntakeUp();
         this.done = true;
     }
 

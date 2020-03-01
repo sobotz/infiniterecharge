@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.BackCommand;
 import frc.robot.commands.DeliverIntakeCommand;
 import frc.robot.commands.DifferentialDriveCommand;
 import frc.robot.commands.LaunchAllCommand;
@@ -65,7 +64,6 @@ public class RobotContainer {
 
     private SerializerSubsystem m_serializer;
     private LauncherSubsystem m_launcher;
-    private BackCommand m_backCommand;
     //private TestLaunchCommand m_testLaunchCommand;
 
     /* END COMMANDS */
@@ -112,8 +110,6 @@ public class RobotContainer {
         this.m_serializer = new SerializerSubsystem();
         this.m_launcher = new LauncherSubsystem();
 
-        this.m_backCommand = new BackCommand(this.m_serializer);
-
         this.launchCommand = new LaunchAllCommand(this.m_serializer, this.m_launcher);
         //this.m_testLaunchCommand = new TestLaunchCommand(this.m_serializer, this.m_launcher);
 
@@ -144,9 +140,7 @@ public class RobotContainer {
 
         // JoystickButton bob = new JoystickButton(m_driveController, 0);
         //JoystickButton ballPrep = new JoystickButton(this.m_leftDriverJoystick, 1);
-        JoystickButton ballsBack = new JoystickButton(this.m_operatorJoystick, 3);
         //ballPrep.toggleWhenPressed(this.m_testLaunchCommand);
-        ballsBack.toggleWhenPressed(this.m_backCommand);
 
         JoystickButton ballsOut = new JoystickButton(this.m_operatorJoystick, 7);
         ballsOut.toggleWhenPressed(this.launchCommand);

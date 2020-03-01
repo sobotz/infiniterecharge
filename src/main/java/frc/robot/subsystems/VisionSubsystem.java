@@ -36,19 +36,19 @@ public class VisionSubsystem extends SubsystemBase implements Group {
 
         /**
          * Initializes a new LEDMode with the given value.
-         * 
+         *
          * @param mode the mode that the mode should use
          */
         public static LEDMode fromString(String mode) {
             switch (mode.toLowerCase()) {
-            case "default":
-                return DEFAULT;
-            case "blink":
-                return BLINK;
-            case "on":
-                return ON;
-            case "off":
-                return OFF;
+                case "default":
+                    return DEFAULT;
+                case "blink":
+                    return BLINK;
+                case "on":
+                    return ON;
+                case "off":
+                    return OFF;
             }
 
             return DEFAULT;
@@ -98,7 +98,7 @@ public class VisionSubsystem extends SubsystemBase implements Group {
         /**
          * Applies the preferences defined in the SmartDashboard preferences pane to the
          * limelight config object.
-         * 
+         *
          * @param prefs the instance of the preferences class that should be used to
          *              configure the limeliight configuration class from
          */
@@ -107,7 +107,7 @@ public class VisionSubsystem extends SubsystemBase implements Group {
             VisionSubsystem visionSubsystem = VisionSubsystem.getDefault();
 
             this.ledMode = LEDMode
-                    .fromString(prefs.getString(visionSubsystem.preferencesKey("ledMode").toString(), "default"));
+                .fromString(prefs.getString(visionSubsystem.preferencesKey("ledMode").toString(), "default"));
 
             return this;
         }
@@ -149,7 +149,7 @@ public class VisionSubsystem extends SubsystemBase implements Group {
     /**
      * Constructs a new VisionSubsystem without any parameters, and, thus without
      * any formal fields.
-     * 
+     *
      * @return the initialized, default vision subsystem
      */
     public static VisionSubsystem getDefault() {
@@ -174,7 +174,7 @@ public class VisionSubsystem extends SubsystemBase implements Group {
 
     /**
      * Gets the name of the preferences group.
-     * 
+     *
      * @return the name of the preferences group
      */
     public String groupName() {

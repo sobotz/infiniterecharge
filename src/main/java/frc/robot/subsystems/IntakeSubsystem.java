@@ -16,18 +16,20 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.common.Preferences;
 
 public class IntakeSubsystem extends SubsystemBase implements Preferences.Group {
+    /* U|_|U ~ Yes. Thy field hath bestowed upon my broken, dry soul thy yellough bahl. I shall suck it up, if I must. */
     WPI_TalonSRX intakeTalon;
 
-    private DoubleSolenoid intakeDelivery;
+    /* OvO ~ Sire, shall I dispatch the bed upon which you may "suck up" thy yellough bahl? */
+    private DoubleSolenoid intakePiston;
 
     /**
      * Creates a new ExampleSubsystem.
      */
 
     public IntakeSubsystem() {
-        intakeTalon = new WPI_TalonSRX(IntakeConstants.INTAKE_MOTOR);
-
-        intakeDelivery = new DoubleSolenoid(IntakeConstants.INTAKE_SOLENOID_DEPLOY,
+        // Initialize a talon to suck the ball up with, and a solenoid to extend and retract the intake with
+        this.intakeTalon = new WPI_TalonSRX(IntakeConstants.INTAKE_MOTOR);
+        this.intakePiston = new DoubleSolenoid(IntakeConstants.INTAKE_SOLENOID_DEPLOY,
                 IntakeConstants.INTAKE_SOLENOID_RETRACT);
 
         intakeTalon.configFactoryDefault();
@@ -43,32 +45,30 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
         return "intake";
     }
 
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-    }
-
-    public void deliverIntake() {
+    /**
+     * Pulls the intake arm up and stops the intake motor.
+     */
+    public void pullIntakeUp() {
         this.runIntake(0.0);
-        this.intakeDelivery.set(Value.kForward);
+        this.intakePiston.set(Value.kForward);
     }
 
+    /**
+     * Starts the intake motor at the given speed.
+     *
+     * @param speed the percentage of the maximum speed defined in Constants that the intake
+     * motor will run at.
+     */
     public void runIntake(double speed) {
         this.intakeTalon.set(ControlMode.PercentOutput, speed * IntakeConstants.MAXIMUM_INTAKE_SPEED);
     }
 
-    public void retractIntake() {
-        this.intakeDelivery.set(Value.kReverse);
-    }
-
-    /*
-     * public void reverseMotors(){ rightIntakeMotor.stopMotor();
-     * leftIntakeMotor.stopMotor(); Timer.delay(2);
-     * rightIntakeMotor.set(ControlMode.PercentOutput, -.1);
-     * leftIntakeMotor.set(ControlMode.PercentOutput, -.1); Timer.delay(5);
-     * rightIntakeMotor.stopMotor(); leftIntakeMotor.stopMotor(); Timer.delay(2);
-     * rightIntakeMotor.set(ControlMode.PercentOutput, .1);
-     * leftIntakeMotor.set(ControlMode.PercentOutput, .1); }
+    /**
+     * Drops the intake arm and starts the intake motor at full speed, with consideration to
+     * the maximum speed defined in Constants.java.
      */
-
+    public void dropIntake() {
+        this.intakePiston.set(Value.kReverse);
+        this.runIntake(1.0);
+    }
 }

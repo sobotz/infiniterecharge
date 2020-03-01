@@ -37,8 +37,8 @@ public class LaunchAllCommand extends CommandBase {
   @Override
   public void execute() {
     //this.serializer.moveBeltsForward();
-    this.launcher.startRollers();
-    this.launcher.startLauncher();
+    this.launcher.runFeed(1.0);
+    this.launcher.runLauncher(1.0);
 
     this.nFramesRun++;
 
@@ -56,7 +56,7 @@ public class LaunchAllCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    this.launcher.stopRollers();
+    this.launcher.stopFeed();
     this.launcher.stopLauncher();
     this.nFramesRun = 0;
   }

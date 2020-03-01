@@ -16,41 +16,58 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 public class LauncherSubsystem extends SubsystemBase {
+    /* The two motors used to launch projectiles from the launcher. */
+    private WPI_TalonFX launcherMotor;
+    private WPI_TalonFX launcherMotor2;
 
-  /**
-   * Creates a new Launcher.
-   */
+    /* The motor used to feed projectiles from the serializer into the launcher. */
+    private WPI_TalonSRX feedMotor;
 
-  public WPI_TalonFX launcherMotor;
-  public WPI_TalonFX launcherMotor2;
-  WPI_TalonSRX feedMotor;
+    /**
+     * Creates a new Launcher.
+     */
+    public LauncherSubsystem() {
+        this.launcherMotor = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_1);
+        this.launcherMotor2 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_2);
+        this.feedMotor = new WPI_TalonSRX(Constants.ROLLER_MOTOR);
 
-  public LauncherSubsystem() {
-    launcherMotor = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_1);
-    launcherMotor2 = new WPI_TalonFX(LauncherConstants.LAUNCHER_MOTOR_2);
-    feedMotor = new WPI_TalonSRX(Constants.ROLLER_MOTOR);
+        this.launcherMotor.configFactoryDefault();
+        this.launcherMotor2.configFactoryDefault();
+        this.feedMotor.configFactoryDefault();
+    }
 
-    launcherMotor.configFactoryDefault();
-    launcherMotor2.configFactoryDefault();
-    feedMotor.configFactoryDefault();
-  }
+    /**
+     * Runs the single SRX motor used to feed projectiles from the serializer into the launcher.
+     *
+     * @param speed the speed at which the feed motor will run
+     */
+    public void runFeed(double speed) {
+        feedMotor.set(ControlMode.PercentOutput, speed);
+    }
 
-  public void startRollers() {
-    feedMotor.set(ControlMode.PercentOutput, 1.00);
-  }
+    /**
+     * Sets the speed of the Launcher's feed motor to 0%. This is the same as calling `m_launcherSubsystem.runFeed(0.0)`.
+     */
+    public void stopFeed() {
+        feedMotor.set(ControlMode.PercentOutput, 0);
+    }
 
-  public void stopRollers() {
-    feedMotor.set(ControlMode.PercentOutput, 0);
-  }
+    /**
+     * Runs the two FX motors used to launch projectiles from the launcher at the given speed.
+     *
+     * @param speed the speed at which projectiles will be launched from the shooter.
+     */
+    public void runLauncher(double speed) {
+        launcherMotor.set(ControlMode.PercentOutput, speed);
+        launcherMotor2.follow(launcherMotor);
+        launcherMotor2.setInverted(true);
+    }
 
-  public void startLauncher() {
-    launcherMotor.set(ControlMode.PercentOutput, 1.00);
-    launcherMotor2.follow(launcherMotor);
-    launcherMotor2.setInverted(true);
-  }
-
-  public void stopLauncher() {
-    launcherMotor.set(ControlMode.Velocity, 0);
-    launcherMotor2.set(ControlMode.Velocity, 0);
-  }
+    /**
+     * Runs the two FX motors at 0% speed, causing them to stop.
+     */
+    public void stopLauncher() {
+        launcherMotor.set(ControlMode.PercentOutput, 0);
+        launcherMotor2.set(ControlMode.PercentOutput, 0);
+    }
 }

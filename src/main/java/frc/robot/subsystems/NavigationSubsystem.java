@@ -11,17 +11,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.common.Preferences;
 
 public class NavigationSubsystem extends SubsystemBase implements Preferences.Group {
-
     /**
      * Creates a new ExampleSubsystem.
      */
-
     public NavigationSubsystem() {
     }
 
     /**
      * Gets the name of the preferences group.
-     * 
+     *
      * @return the name of the preferences group
      */
     @Override
