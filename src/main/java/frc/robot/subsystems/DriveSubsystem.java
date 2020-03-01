@@ -147,4 +147,8 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
     public void zeroHeading() {
         ahrs.zeroYaw();
     }
+
+    public double inchesToTalon(double inches){
+        return inches * (Constants.DriveConstants.inchToTalon);
+    }
 }
