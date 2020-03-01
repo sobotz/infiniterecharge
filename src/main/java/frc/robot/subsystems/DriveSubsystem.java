@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.common.Preferences;
 
@@ -121,6 +122,14 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
     public void drive(Type driveType, double[] percentageSpeeds) {
         // Use the preferred drive to drive the robot
         this.motorControllers.drive(driveType, percentageSpeeds[0], percentageSpeeds[1]);
+    }
+
+    public void manualDrive2(double speed, double rotation) {
+        this.motorControllers.frontLeftController.set(ControlMode.PercentOutput, -speed, DemandType.ArbitraryFeedForward, -rotation);
+        this.motorControllers.frontRightController.set(ControlMode.PercentOutput, speed, DemandType.ArbitraryFeedForward, -rotation);
+
+        this.motorControllers.backLeftController.follow(this.motorControllers.frontLeftController);
+        this.motorControllers.backRightController.follow(this.motorControllers.frontRightController);
     }
 
     /**

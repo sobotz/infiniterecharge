@@ -7,56 +7,34 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.commands.DriveCommand;
 
-public class DeliverIntakeCommand extends CommandBase {
-    private final IntakeSubsystem m_intake;
-    private boolean done;
-    private boolean direction;
+// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
+// information, see:
+// https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
+public class DeliverIntakeCommand extends InstantCommand {
+  private final IntakeSubsystem m_intake;
 
     /**
-     * Creates a new DeliverIntakeCommand.
+     * Creates a new ShiftGearCommand.
      */
     public DeliverIntakeCommand(IntakeSubsystem subsystem) {
-        m_intake = subsystem;
-        this.done = false;
-        this.direction = true;
+        this.m_intake = subsystem;
 
-        addRequirements(m_intake);
         // Use addRequirements() here to declare subsystem dependencies.
-    }
+        addRequirements(m_intake);
+  }
 
-    // Called when the command is initially scheduled.
-    @Override
-    public void initialize() {
-        this.done = false;
-        this.direction = true;
-        this.m_intake.retractIntake();
-    }
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    m_intake.toggleIntake();
+  }
 
-    public void setDirection(boolean direction) {
-        // Wait half a second to reverse the direction
-        Timer.delay(0.5);
-
-        this.direction = direction;
-    }
-
-    public void execute() {
-        this.m_intake.runIntake(this.direction ? -1.0 : 1.0);
-    }
-
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-        this.m_intake.deliverIntake();
-        this.done = true;
-    }
-
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished() {
-        return this.done;
-    }
+  /*public void end(){
+  }*/
 }

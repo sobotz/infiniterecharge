@@ -36,9 +36,9 @@ public class LaunchAllCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //this.serializer.moveBeltsForward();
-    this.launcher.startRollers();
     this.launcher.startLauncher();
+    this.launcher.startRollers();
+    this.serializer.runSerializer();
 
     this.nFramesRun++;
 

@@ -36,7 +36,7 @@ public class LauncherSubsystem extends SubsystemBase {
   }
 
   public void startRollers() {
-    feedMotor.set(ControlMode.PercentOutput, 1.00);
+    feedMotor.set(ControlMode.PercentOutput, 1);
   }
 
   public void stopRollers() {
@@ -44,9 +44,9 @@ public class LauncherSubsystem extends SubsystemBase {
   }
 
   public void startLauncher() {
-    launcherMotor.set(ControlMode.PercentOutput, 1.00);
+    launcherMotor.set(ControlMode.PercentOutput, 1);
+    launcherMotor.setInverted(true);
     launcherMotor2.follow(launcherMotor);
-    launcherMotor2.setInverted(true);
   }
 
   public void stopLauncher() {

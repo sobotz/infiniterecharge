@@ -20,10 +20,10 @@ public final class Constants {
 	}
 
 	public static final class DriveConstants {
-		public static final int LEFT_FRONT_MOTOR = 1;
-		public static final int LEFT_BACK_MOTOR = 2;
+		public static final int LEFT_FRONT_MOTOR = 2;
+		public static final int LEFT_BACK_MOTOR = 1;
 		public static final int RIGHT_FRONT_MOTOR = 4;
-		public static final int RIGHT_BACK_MOTOR = 6;
+		public static final int RIGHT_BACK_MOTOR = 3;
 		public static final int GEAR_SHIFT_DEPLOY = 1;
 		public static final int GEAR_SHIFT_RETRACT = 0;
 
@@ -47,8 +47,8 @@ public final class Constants {
 	}
 
 	public static final class LauncherConstants {
-		public static final int LAUNCHER_MOTOR_1 = 2;
-		public static final int LAUNCHER_MOTOR_2 = 5;
+		public static final int LAUNCHER_MOTOR_1 = 5;
+		public static final int LAUNCHER_MOTOR_2 = 6;
 	}
 
 	public static final class LiftConstants {

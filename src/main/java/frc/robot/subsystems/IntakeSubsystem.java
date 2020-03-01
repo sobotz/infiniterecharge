@@ -20,6 +20,8 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
 
     private DoubleSolenoid intakeDelivery;
 
+    boolean hasDeployed;
+
     /**
      * Creates a new ExampleSubsystem.
      */
@@ -31,6 +33,8 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
                 IntakeConstants.INTAKE_SOLENOID_RETRACT);
 
         intakeTalon.configFactoryDefault();
+
+        hasDeployed = false;
     }
 
     /**
@@ -59,6 +63,18 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
 
     public void retractIntake() {
         this.intakeDelivery.set(Value.kReverse);
+    }
+
+    public boolean toggleIntake() {
+        if (this.hasDeployed) {
+            intakeDelivery.set(DoubleSolenoid.Value.kForward);
+            this.hasDeployed = false;
+        } else {
+            intakeDelivery.set(DoubleSolenoid.Value.kReverse);
+            this.hasDeployed = true;
+        }
+
+        return !this.hasDeployed;
     }
 
     /*

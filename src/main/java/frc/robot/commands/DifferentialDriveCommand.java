@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DriveSubsystem.Type;
+import frc.robot.RobotContainer;
 import frc.robot.common.Patterns;
 
 /**
@@ -35,6 +36,7 @@ public class DifferentialDriveCommand extends CommandBase
      */
     public DifferentialDriveCommand(DriveSubsystem drivetrain, DoubleSupplier xInput, DoubleSupplier yInput,
             DoubleSupplier zInput) {
+
         // Use the provided drivetrain
         this.m_drivetrain = drivetrain;
 

@@ -7,11 +7,16 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.commands.DriveCommand;
 
-public class ShiftGearCommand extends CommandBase {
-    private final DriveSubsystem m_driveSubsystem;
+// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
+// information, see:
+// https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
+public class ShiftGearCommand extends InstantCommand {
+  private final DriveSubsystem m_driveSubsystem;
 
     /**
      * Creates a new ShiftGearCommand.
@@ -21,17 +26,14 @@ public class ShiftGearCommand extends CommandBase {
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(m_driveSubsystem);
-    }
+  }
 
-    // Called every time the scheduler runs while the command is scheduled.
-    @Override
-    public void initialize() {
-        m_driveSubsystem.shiftGear();
-    }
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    m_driveSubsystem.shiftGear();
+  }
 
-    // Returns true when the command should end.
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
+  /*public void end(){
+  }*/
 }
