@@ -34,7 +34,7 @@ public class LaunchAllCommand extends CommandBase {
         // Wait until the serializer is completely empty
         // by continuously running the belts
         if (this.serializer.hasBalls()) {
-            this.serializer.runBelts();
+            this.serializer.moveBeltsForward();
         }
 
         // Launch any balls from the serializer to the feed to the power port
