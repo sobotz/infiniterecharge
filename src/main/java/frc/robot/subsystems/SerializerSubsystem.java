@@ -127,7 +127,7 @@ public class SerializerSubsystem extends SubsystemBase {
         }
 
         // If there are balls in the serializer, start moving the belts
-        if (this.balls.size() > 0) {
+        if (this.hasBalls()) {
             this.moveBeltsForward();
         }
     }
@@ -148,6 +148,15 @@ public class SerializerSubsystem extends SubsystemBase {
     public boolean canAcceptBalls() {
         // The serializer can hold 5 balls, at max
         return this.balls.size() < 5;
+    }
+
+    /**
+     * Whether or not there are any balls inside the serializer.
+     *
+     * @return whether or not there are any balls inside the serializer
+     **/
+    public boolean hasBalls() {
+        return this.balls.size() > 0;
     }
 
     /**
