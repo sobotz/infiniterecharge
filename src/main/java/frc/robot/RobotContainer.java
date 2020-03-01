@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.BackCommand;
 import frc.robot.commands.DeliverIntakeCommand;
 import frc.robot.commands.DifferentialDriveCommand;
 import frc.robot.commands.LaunchAllCommand;
@@ -65,7 +64,6 @@ public class RobotContainer {
 
     private SerializerSubsystem m_serializer;
     private LauncherSubsystem m_launcher;
-    private BackCommand m_backCommand;
     //private TestLaunchCommand m_testLaunchCommand;
 
     /* END COMMANDS */
@@ -112,8 +110,6 @@ public class RobotContainer {
         this.m_serializer = new SerializerSubsystem();
         this.m_launcher = new LauncherSubsystem();
 
-        this.m_backCommand = new BackCommand(this.m_serializer);
-
         this.launchCommand = new LaunchAllCommand(this.m_serializer, this.m_launcher);
         //this.m_testLaunchCommand = new TestLaunchCommand(this.m_serializer, this.m_launcher);
 
@@ -125,30 +121,40 @@ public class RobotContainer {
      * Activates bindings to the autonomous command from the button box.
      */
     private void configureButtonBindings() {
-        JoystickButton gearShiftButton = new JoystickButton(this.m_operatorJoystick, 1);
-        JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 2);
-        JoystickButton activateVisionButton = new JoystickButton(this.m_operatorJoystick, 4);
-        JoystickButton activateIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
-        JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 6);
+        JoystickButton gearShiftButton = new JoystickButton(this.m_leftDriverJoystick, 1);
+        JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 1);
+        // Changed to A
+        JoystickButton activateVisionButton = new JoystickButton(this.m_operatorJoystick, 3);
+        // Changed to X
+        // JoystickButton activateIntakeButton = new JoystickButton(this.m_operatorJoystick, 6);
+        // Changed to left trigger (raw axis)
+        JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
+        // Change to left bumper
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
+
+        if (this.m_operatorJoystick.getRawAxis(2) > 0) {
+            this.intakeControlCommand.setDirection(true);
+        }
+
+        if (this.m_operatorJoystick.getRawAxis(3) > 0) {
+            // Serializer
+        }
 
         deliverIntakeButton.toggleWhenPressed(this.intakeControlCommand);
 
         // When the left bumper button is pressed, reverse the intake
         reverseIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(false));
-        activateIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(true));
+        // activateIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(true));
 
         // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
         activateVisionButton.toggleWhenPressed(this.visionCommand);
 
         // JoystickButton bob = new JoystickButton(m_driveController, 0);
         //JoystickButton ballPrep = new JoystickButton(this.m_leftDriverJoystick, 1);
-        JoystickButton ballsBack = new JoystickButton(this.m_operatorJoystick, 3);
         //ballPrep.toggleWhenPressed(this.m_testLaunchCommand);
-        ballsBack.toggleWhenPressed(this.m_backCommand);
 
-        JoystickButton ballsOut = new JoystickButton(this.m_operatorJoystick, 7);
+        JoystickButton ballsOut = new JoystickButton(this.m_operatorJoystick, 6);
         ballsOut.toggleWhenPressed(this.launchCommand);
 
         // this.m_intake.setDefaultCommand(intakeControlCommand);
