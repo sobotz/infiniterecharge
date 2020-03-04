@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -155,5 +157,21 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
 
     public void zeroHeading() {
         ahrs.zeroYaw();
+    }
+
+    public double talonToInches(double talonUnits){
+        return talonUnits * (Constants.DriveConstants.talonToInch);
+    }
+
+    public double talonToInches(TalonFX talon){
+        return talon.getSelectedSensorPosition() * (Constants.DriveConstants.talonToInch);
+    }
+
+    public double talonToInches(TalonSRX talon){
+        return talon.getSelectedSensorPosition() * (Constants.DriveConstants.talonToInch);
+    }
+
+    public double getLeftTalonDistance(TalonFX talon){
+        return this.talonToInches(talon);
     }
 }
