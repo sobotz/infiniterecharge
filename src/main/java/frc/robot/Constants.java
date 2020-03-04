@@ -37,6 +37,9 @@ public final class Constants {
 		public static final boolean GYRO_REVERSED = false;
 
 		public static final double DISTANCE_PER_PULSE= (64910.5/100)/2048;
+
+		public static final double inchToTalon = 2048/(Math.PI*6); 
+		public static final double talonToInch = (Math.PI*6)/2048; 
 	}
 
 	public static final class IntakeConstants {

@@ -7,39 +7,37 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.navigation.*;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LauncherSubsystem;
+import frc.robot.subsystems.SerializerSubsystem;
 
-public class PurePursuitCommand extends CommandBase {
-  private final DriveSubsystem m_driveSubsystem;
-  Point[] purePursuitPath;
-  EncoderController purePursuitE;
+public class SimpleAutoCommand extends CommandBase {
+  private final DriveSubsystem m_drive;
+  private final SerializerSubsystem m_serializer;
+  private LauncherSubsystem m_launcher;
   private boolean isFinished = false;
-  TalonFX frontLeft, frontRight;
+  private int nFramesRun;
+  
+  public SimpleAutoCommand(DriveSubsystem drive, SerializerSubsystem serial, LauncherSubsystem launch) {
+    this.m_drive = drive;
+    this.m_serializer = serial;
+    this.m_launcher = launch;
 
-  public PurePursuitCommand(Point[] points, DriveSubsystem subsystem, TalonFX lTalon, TalonFX rTalon) {
-    this.m_driveSubsystem = subsystem;
-    this.purePursuitPath = points;
-    this.purePursuitE = new EncoderController(this.purePursuitPath, 0.8);
-    this.frontLeft = lTalon;
-    this.frontRight = rTalon;
+    this.nFramesRun = 0;
 
-    addRequirements(m_driveSubsystem);
+    addRequirements(this.m_drive, this.m_launcher, this.m_serializer);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    this.nFramesRun = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.isFinished = this.purePursuitE.controlLoop(this.m_driveSubsystem, this.m_driveSubsystem.talonToInches(frontLeft), 
-      this.m_driveSubsystem.talonToInches(frontRight), m_driveSubsystem.getHeading());
   }
 
   // Called once the command ends or is interrupted.

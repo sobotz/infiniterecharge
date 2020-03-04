@@ -15,7 +15,9 @@ import frc.robot.commands.DeliverIntakeCommand;
 import frc.robot.commands.DifferentialDriveCommand;
 import frc.robot.commands.LaunchAllCommand;
 import frc.robot.commands.MoveToReflectiveTargetCommand;
+import frc.robot.commands.PurePursuitCommand;
 import frc.robot.commands.ShiftGearCommand;
+import frc.robot.commands.SimpleAutoCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DriveSubsystem.MotorControllerConfiguration;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -53,8 +55,14 @@ public class RobotContainer {
     /* A fallback teleOp command for the robot (arcade drive). */
     private final DifferentialDriveCommand fallbackTeleopCommand;
 
-    /* The current autonomous command for the robot. */
+    /* The current vision command for the robot. */
     private final MoveToReflectiveTargetCommand visionCommand;
+
+    /* Encoder Pure Pursuit Command. */
+    //private final PurePursuitCommand purePursuitCommand;
+
+    /* Simple Auto Program, most likely to be used throughout competitions. */
+    private final SimpleAutoCommand autoCommand;
 
     /* A command used to control the intake. */
     private final DeliverIntakeCommand intakeControlCommand;
@@ -64,7 +72,6 @@ public class RobotContainer {
 
     private SerializerSubsystem m_serializer;
     private LauncherSubsystem m_launcher;
-    //private TestLaunchCommand m_testLaunchCommand;
 
     /* END COMMANDS */
 
@@ -103,6 +110,12 @@ public class RobotContainer {
         this.visionCommand = new MoveToReflectiveTargetCommand(this.m_drivetrain, this.m_vision,
                 MoveToReflectiveTargetCommand.Configuration.getDefault().applyPreferences(this.m_preferences));
 
+        //Set up the Encoder Pure Pursuit Command
+        //this.purePursuitCommand = new PurePursuitCommand(points, subsystem, lTalon, rTalon);
+
+        //Set up the Simple Auto Program
+        this.autoCommand = new SimpleAutoCommand(this.m_drivetrain, this.m_serializer, this.m_launcher);
+
         // Setup a command to control the intake subsystem from, using the left driver
         // joystick
         this.intakeControlCommand = new DeliverIntakeCommand(this.m_intake);
@@ -111,7 +124,6 @@ public class RobotContainer {
         this.m_launcher = new LauncherSubsystem();
 
         this.launchCommand = new LaunchAllCommand(this.m_serializer, this.m_launcher);
-        //this.m_testLaunchCommand = new TestLaunchCommand(this.m_serializer, this.m_launcher);
 
         // Configure the button bindings
         this.configureButtonBindings();
@@ -163,5 +175,10 @@ public class RobotContainer {
     public Command getTeleopCommand() {
         // Use differential drive
         return this.fallbackTeleopCommand;
+    }
+
+    public Command getAutoCommand(){
+        //Returns the Auto Command currently in use
+        return this.autoCommand;
     }
 }
