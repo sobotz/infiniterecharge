@@ -33,12 +33,10 @@ public class SerializerSubsystem extends SubsystemBase {
   public AnalogInput launcherSensor;
 
   // Initializes variables that wiil be used in the program
-  public double ballCount = 0.0;
+  public double ballCount = 3.0;
   public boolean acceptingBalls = true;
   public boolean previousLSValue = false; // previous launcher sensor value
   public boolean previousSSValue = false; // previous serializer sensor value
-  public boolean serializerSensor1Value; // first sensor true means ball
-  public boolean serializerSensor2Value; // sec sensor
   public double previousBallCount;
 
   public SerializerSubsystem() {
