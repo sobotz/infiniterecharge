@@ -41,13 +41,14 @@ public class SimpleAutoCommand extends CommandBase {
   public void execute() {
 
     if(timer.get() < 5){
+      System.out.println("Starting rollers");
       this.m_launcher.startLauncher();
       this.m_launcher.startRollers();
       this.m_serializer.runSerializer();
     }else if(timer.get() < 6){
       this.m_launcher.stopLauncher();
       this.m_launcher.stopRollers();
-      this.m_drive.manualDrive2(-0.5, 0);
+      this.m_drive.manualDrive2(0.5, 0);
     }else{
       this.m_drive.manualDrive2(0, 0);
       this.m_launcher.stopLauncher();
