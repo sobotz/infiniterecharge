@@ -37,10 +37,7 @@ public class SerializerSubsystem extends SubsystemBase {
   public boolean acceptingBalls = true;
   public boolean previousLSValue = false; // previous launcher sensor value
   public boolean previousSSValue = false; // previous serializer sensor value
-  public boolean serializerSensor1Value; // first sensor true means ball
-  public boolean serializerSensor2Value; // sec sensor
-  public double previousBallCount = 0.0;
- 
+  public double previousBallCount;
 
   public SerializerSubsystem() {
     // instantiates sensor values with respect to the contants method
