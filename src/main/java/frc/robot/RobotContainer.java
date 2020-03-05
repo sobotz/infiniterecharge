@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DeliverIntakeCommand;
 import frc.robot.commands.DifferentialDriveCommand;
-import frc.robot.commands.DriveCommand;
 import frc.robot.commands.IntakeDirectionControl;
 import frc.robot.commands.LaunchAllCommand;
 import frc.robot.commands.MoveToReflectiveTargetCommand;
@@ -42,6 +41,12 @@ public class RobotContainer {
     /* The robot's vision subsystem. */
     private final VisionSubsystem m_vision;
 
+    /* The robot's serializer subsystem. */
+    private final SerializerSubsystem m_serializer;
+
+    /*The robot's launcher subsystem. */
+    private final LauncherSubsystem m_launcher;
+
     /* END SUBSYSTEMS */
 
     /* The robot's settings. */
@@ -50,14 +55,16 @@ public class RobotContainer {
     /* The driver's joystick. */
     public static Joystick m_leftDriverJoystick;
 
-	private Joystick m_operatorJoystick;
+    /*The operator's joystick*/
+    private Joystick m_operatorJoystick;
+    
+    /*The button box*/
+    public Joystick m_buttonBox;
 
     /* BEGIN COMMANDS */
 
     /* A fallback teleOp command for the robot (arcade drive). */
     private final DifferentialDriveCommand fallbackTeleopCommand;
-
-    private final DriveCommand driveCommand;
 
     /* The current autonomous command for the robot. */
     private final MoveToReflectiveTargetCommand visionCommand;
@@ -68,12 +75,13 @@ public class RobotContainer {
     /* The command used to launch each of the power cells. */
     private final LaunchAllCommand launchCommand;
 
-    private SerializerSubsystem m_serializer;
-    private LauncherSubsystem m_launcher;
+    /* The command used to run the intake forward. */
+    private final IntakeDirectionControl intakeForwardCommand;
 
-    private IntakeDirectionControl fullForwardCommand;
-    private IntakeDirectionControl fullReverseCommand;
-    //private TestLaunchCommand m_testLaunchCommand;
+    /* The command used to run the intake forward. */
+    private final IntakeDirectionControl intakeReverseCommand;
+
+    
 
     /* END COMMANDS */
 
@@ -96,19 +104,21 @@ public class RobotContainer {
         this.m_drivetrain = new DriveSubsystem(motorCfg);
         this.m_intake = new IntakeSubsystem();
         this.m_vision = new VisionSubsystem(visionCfg);
+        this.m_serializer = new SerializerSubsystem();
+        this.m_launcher = new LauncherSubsystem();
 
         // Set up the controllers for the teleop command
         this.m_leftDriverJoystick = new Joystick(0);
         this.m_operatorJoystick = new Joystick(1);
+        this.m_buttonBox = new Joystick(2);
 
         // Set up an alternative teleop command that uses arcade drive; use just one
         // joystick
         this.fallbackTeleopCommand = new DifferentialDriveCommand(this.m_drivetrain,
-                () -> this.m_leftDriverJoystick.getRawAxis(0), () -> -this.m_leftDriverJoystick.getRawAxis(1),
-                () -> this.m_leftDriverJoystick.getRawAxis(2)).applyPreferences(this.m_preferences);
+                () -> m_leftDriverJoystick.getRawAxis(0), () -> -m_leftDriverJoystick.getRawAxis(1),
+                () -> m_leftDriverJoystick.getRawAxis(2)).applyPreferences(this.m_preferences);
 
 
-        this.driveCommand = new DriveCommand(this.m_drivetrain);
         // SmartDashboard in order to override default values
         this.visionCommand = new MoveToReflectiveTargetCommand(this.m_drivetrain, this.m_vision,
                 MoveToReflectiveTargetCommand.Configuration.getDefault().applyPreferences(this.m_preferences));
@@ -117,14 +127,11 @@ public class RobotContainer {
         // joystick
         this.deliverIntakeCommand = new DeliverIntakeCommand(this.m_intake);
         
-        this.fullForwardCommand = new IntakeDirectionControl(this.m_intake, true);
-        this.fullReverseCommand = new IntakeDirectionControl(this.m_intake, false);
-
-        this.m_serializer = new SerializerSubsystem();
-        this.m_launcher = new LauncherSubsystem();
+        /* Set up two commands that control the diretion of the intake. */
+        this.intakeForwardCommand = new IntakeDirectionControl(this.m_intake, false);
+        this.intakeReverseCommand = new IntakeDirectionControl(this.m_intake, true);
         
-
-
+        /* Set up a command that launches balls from the serializer */
         this.launchCommand = new LaunchAllCommand(this.m_serializer, this.m_launcher);
 
         //this.m_testLaunchCommand = new TestLaunchCommand(this.m_serializer, this.m_launcher);
@@ -137,43 +144,43 @@ public class RobotContainer {
      * Activates bindings to the autonomous command from the button box.
      */
     private void configureButtonBindings() {
-        JoystickButton gearShiftButton = new JoystickButton(this.m_leftDriverJoystick, 1);
-        JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 1);
-        // Changed to A
+        JoystickButton gearShiftButton = new JoystickButton(m_leftDriverJoystick, 1);
         JoystickButton activateVisionButton = new JoystickButton(this.m_operatorJoystick, 3);
-        // Changed to X
-        // JoystickButton activateIntakeButton = new JoystickButton(this.m_operatorJoystick, 6);
-        // Changed to left trigger (raw axis)
-        JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
-
-        // Change to left bumper
+        JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 1);
+        JoystickButton forwardIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
+        JoystickButton reverseIntakeButton = new JoystickButton(this.m_buttonBox, 1);
+        JoystickButton launchBallsButton = new JoystickButton(this.m_operatorJoystick, 6);
+        JoystickButton serializerForwardButton = new JoystickButton(this.m_buttonBox, 2);
+        JoystickButton serializerReverseButton = new JoystikButton(this.m_buttonBox,3);
         
-
+        /* Shifts between low and high gear when the trigger on the driver joystick is pressed*/
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
 
+        /* Shifts between intake up and intake down when A is pressed on the operator joystick */
         deliverIntakeButton.toggleWhenPressed(this.deliverIntakeCommand);
 
-        // When the left bumper button is pressed, reverse the intake)
-        reverseIntakeButton.whenPressed(this.fullReverseCommand); 
-        // activateIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(true));
+        /* When the left bumper button is pressed, run the intake forward */
+        forwardIntakeButton.toggleWhenPressed(this.intakeForwardCommand); 
 
-        // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
+        /* When the first button on the button box is pressed, run the intake in reverse */
+        reverseIntakeButton.toggleWhenPressed(this.intakeReverseCommand);
+
+        /* Runs the vision command when X is pressed */
         activateVisionButton.toggleWhenPressed(this.visionCommand);
 
-        // JoystickButton bob = new JoystickButton(m_driveController, 0);
+        /*When the right bumper is held, run the serializer, feed, and launcher to shoot balls */
+        launchBallsButton.whenHeld(this.launchCommand);
+
+        serializerForwardButton.toggleWhenPressed(this.)
+
+        //JoystickButton bob = new JoystickButton(m_driveController, 0);
         //JoystickButton ballPrep = new JoystickButton(this.m_leftDriverJoystick, 1);
         //ballPrep.toggleWhenPressed(this.m_testLaunchCommand);
-
-        JoystickButton ballsOut = new JoystickButton(this.m_operatorJoystick, 6);
-        ballsOut.whenHeld(this.launchCommand);
-
-    
-
         // this.m_intake.setDefaultCommand(intakeControlCommand);
     }
 
     public Command getTeleopCommand() {
         // Use differential drive
-        return this.driveCommand;
+        return this.fallbackTeleopCommand;
     }
 }

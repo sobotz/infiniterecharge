@@ -8,36 +8,42 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.SerializerSubsystem;
 
-public class DriveCommand extends CommandBase {
-  DriveSubsystem drivetrain; 
+public class RunSerializerCommand extends CommandBase {
+  SerializerSubsystem m_serializer;
+  boolean direction;
 
   /**
-   * Creates a new DriveCommand.
+   * Creates a new RunSerializerCommand.
    */
-  public DriveCommand(DriveSubsystem subsystem) {
-    this.drivetrain = subsystem;
+  public RunSerializerCommand(SerializerSubsystem subsystem, boolean direction) {
+    this.m_serializer = subsystem;
+    this.direction = direction;
 
-    addRequirements(drivetrain);
+    addRequirements(m_serializer);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if(this.direction){
+      this.m_serializer.runSerializer(-1);
+    }else{
+      this.m_serializer.runSerializer(1);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivetrain.manualDrive2(RobotContainer.m_leftDriverJoystick.getRawAxis(1), -RobotContainer.m_leftDriverJoystick.getRawAxis(0));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    this.m_serializer.stopSerializer();
   }
 
   // Returns true when the command should end.

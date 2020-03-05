@@ -146,9 +146,13 @@ public class SerializerSubsystem extends SubsystemBase {
     acceptingBalls = true; 
     }
   }
-  
-  public void runSerializer(){
-    serializerMotor1.set(ControlMode.PercentOutput, -Constants.SerializerConstants.SERIALIZER_SPEED);
+
+  public void stopSerializer(){
+    serializerMotor1.set(ControlMode.PercentOutput, 0);
+
   }
 
+  public void runSerializer(int posOrNeg){
+    serializerMotor1.set(ControlMode.PercentOutput, posOrNeg*Constants.SerializerConstants.SERIALIZER_SPEED);
+  }
 }

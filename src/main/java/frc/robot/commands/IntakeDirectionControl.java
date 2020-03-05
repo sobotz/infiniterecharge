@@ -19,8 +19,8 @@ public class IntakeDirectionControl extends CommandBase {
    * Creates a new IntakeDirectionControl.
    */
   public IntakeDirectionControl(IntakeSubsystem subsystem, boolean direction) {
-    m_intake = subsystem;
-    speedDirection = direction;
+    this.m_intake = subsystem;
+    this.speedDirection = direction;
     addRequirements(m_intake);
     // Use addRequirements() here to declare subsystem dependencies.
   }
