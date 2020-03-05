@@ -48,7 +48,7 @@ public class RobotContainer {
     private final Preferences m_preferences;
 
     /* The driver's joystick. */
-    public static Joystick m_leftDriverJoystick;
+    public Joystick m_leftDriverJoystick;
 
 	private Joystick m_operatorJoystick;
 
@@ -145,18 +145,11 @@ public class RobotContainer {
         // JoystickButton activateIntakeButton = new JoystickButton(this.m_operatorJoystick, 6);
         // Changed to left trigger (raw axis)
         JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
+
         // Change to left bumper
         
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
-
-        if (this.m_operatorJoystick.getRawAxis(2) != 0) {
-            this.fullForwardCommand = new IntakeDirectionControl(m_intake, true);
-        }
-
-        if (this.m_operatorJoystick.getRawAxis(3) > 0) {
-            
-        }
 
         deliverIntakeButton.toggleWhenPressed(this.deliverIntakeCommand);
 
