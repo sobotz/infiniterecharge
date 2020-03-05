@@ -48,7 +48,7 @@ public class RobotContainer {
     private final Preferences m_preferences;
 
     /* The driver's joystick. */
-    public Joystick m_leftDriverJoystick;
+    public static Joystick m_leftDriverJoystick;
 
 	private Joystick m_operatorJoystick;
 
