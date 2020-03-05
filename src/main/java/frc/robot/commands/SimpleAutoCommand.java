@@ -44,7 +44,7 @@ public class SimpleAutoCommand extends CommandBase {
       this.m_launcher.startLauncher();
       this.m_launcher.startRollers();
       this.m_serializer.runSerializer();
-    }else if(timer.get() < 7){
+    }else if(timer.get() < 6){
       this.m_launcher.stopLauncher();
       this.m_launcher.stopRollers();
       this.m_drive.manualDrive2(-0.5, 0);
