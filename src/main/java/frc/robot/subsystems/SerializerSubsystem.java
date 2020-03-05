@@ -33,12 +33,10 @@ public class SerializerSubsystem extends SubsystemBase {
   public AnalogInput launcherSensor;
 
   // Initializes variables that wiil be used in the program
-  public double ballCount = 0.0;
+  public double ballCount = 3.0;
   public boolean acceptingBalls = true;
   public boolean previousLSValue = false; // previous launcher sensor value
   public boolean previousSSValue = false; // previous serializer sensor value
-  public boolean serializerSensor1Value; // first sensor true means ball
-  public boolean serializerSensor2Value; // sec sensor
   public double previousBallCount;
 
   public SerializerSubsystem() {
@@ -46,8 +44,7 @@ public class SerializerSubsystem extends SubsystemBase {
     serializerSensor1 = new AnalogInput(Constants.PHOTOELECTRIC_SENSOR_1);
     serializerSensor2 = new AnalogInput(Constants.PHOTOELECTRIC_SENSOR_2);
     launcherSensor = new AnalogInput(Constants.PHOTOELECTRIC_SENSOR_3);
-    //ballCount = SmartDashboard.getNumber("Ball Count: ", 0);
-    previousBallCount = 0;
+    SmartDashboard.putNumber("Ball Count: ", ballCount);
 
     
     this.serializerMotor1 = new WPI_TalonSRX(SerializerConstants.SERIALIZER_MOTOR);
@@ -67,13 +64,13 @@ public class SerializerSubsystem extends SubsystemBase {
     //SmartDashboard.putNumber("Sensor 1: ", serializerSensor1.getVoltage()); // true
     //SmartDashboard.putNumber("Sensor 2: ", serializerSensor2.getVoltage()); // true
 
-    if (!previousSSValue && serializerSensor2.getVoltage() < .85 && acceptingBalls) {
-      ballCount++;
+    if (!previousSSValue && serializerSensor2.getVoltage() < .85) {
+    
       // update ballCount
-      //ballCount = SmartDashboard.getNumber("Ball Count", ballCount);
-      //SmartDashboard.putNumber("Ball Count: ", ballCount);
-      previousSSValue = true;
+      ballCount++;
+      SmartDashboard.putNumber("Ball Count: ", ballCount);
     }
+    previousSSValue = serializerSensor2.getVoltage() < .85;
 
     acceptingBalls = ballCount < 5; //Took out >= 0 because we should still be able to accept balls even when negative
 /*
@@ -91,7 +88,9 @@ public class SerializerSubsystem extends SubsystemBase {
       }
     }
 */
-    if (launcherSensor.getVoltage() < 0.85) {
+    
+/*                  if (launcherSensor.getVoltage() < 0.85) {
+
       if (ballCount > 0 && !previousLSValue) {
         // decrement ballCount by 1
         ballCount--;
@@ -99,8 +98,9 @@ public class SerializerSubsystem extends SubsystemBase {
         //SmartDashboard.putNumber("Ball Count: ", ballCount);
       previousLSValue = true;
       }
+      ballCount = SmartDashboard.getNumber("Ball Count: ", ballCount);
     }
-
+*/
     if (serializerSensor1.getVoltage() < .85 && acceptingBalls) {
       serializerMotor1.set(ControlMode.PercentOutput, -SerializerConstants.SERIALIZER_SPEED);
       //SmartDashboard.putBoolean("Belts On: ", true);
@@ -108,8 +108,10 @@ public class SerializerSubsystem extends SubsystemBase {
       serializerMotor1.set(ControlMode.PercentOutput, 0);
       //SmartDashboard.putBoolean("Belts On: ", false);
     }
-    ballCount = SmartDashboard.getNumber("Ball Count", ballCount);
-    //SmartDashboard.putNumber("Ball Count", ballCount);
+
+   
+   SmartDashboard.putNumber("Ball Count", ballCount);
+    previousBallCount = ballCount;
 
   }
 
