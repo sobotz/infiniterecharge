@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
+import java.lang.Math;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -27,6 +28,9 @@ public class DifferentialDriveCommand extends CommandBase
     /* A speed limitation variable provided through smart dashboard. */
     private DoubleSupplier maximumSpeed;
 
+    /* The number by which input from the joystick should be ^d. */
+    private DoubleSupplier amplificationFactor;
+
     /**
      * Crates a new DifferentialDriveCommand.
      * 
@@ -42,6 +46,9 @@ public class DifferentialDriveCommand extends CommandBase
 
         // By default, we'll set out speed to 1.0
         this.maximumSpeed = () -> 1.0;
+
+        // By default, we'll set amp factor to 1.0
+        this.amplificationFactor = () -> 1.0;
 
         // Use the axis inputs that the user provided
         this.xInput = xInput;
@@ -64,6 +71,8 @@ public class DifferentialDriveCommand extends CommandBase
         // from there
         this.maximumSpeed = () -> prefs.getDouble(this.m_drivetrain.preferencesKey("maximumSpeed").toString(), 1.0);
 
+        this.amplificationFactor = () -> prefs.getDouble(this.m_drivetrain.preferencesKey("inputAmplificationFactor").toString(), 1.0);
+
         this.finalX = () -> this.maximumSpeed.getAsDouble() * this.xInput.getAsDouble();
         this.finalY = () -> this.maximumSpeed.getAsDouble() * this.yInput.getAsDouble();
         this.finalZ = () -> this.maximumSpeed.getAsDouble() * this.zInput.getAsDouble();
@@ -78,9 +87,12 @@ public class DifferentialDriveCommand extends CommandBase
      */
     @Override
     public void execute() {
+        // Get the factor by which the input should be amplified
+        double inputAmplificationFactor = this.amplificationFactor.getAsDouble();
+
         // Drive the drivetrain with a differential drive config
         this.m_drivetrain.drive(Type.DIFFERENTIAL,
-                new double[] { this.finalX.getAsDouble(), this.finalY.getAsDouble(), this.finalZ.getAsDouble() });
+                new double[] { Math.pow(this.finalX.getAsDouble(), inputAmplificationFactor), Math.pow(this.finalY.getAsDouble(), inputAmplificationFactor), Math.pow(this.finalZ.getAsDouble(), inputAmplificationFactor) });
     }
 
     /**
