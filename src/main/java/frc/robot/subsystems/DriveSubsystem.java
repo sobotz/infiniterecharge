@@ -151,7 +151,7 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
     }
 
     public double getHeading() {
-        return Math.IEEEremainder(ahrs.getAngle(), 360) * (DriveConstants.GYRO_REVERSED ? -1.0 : 1.0);
+        return Math.IEEEremainder(ahrs.getAngle(), 360) * (Constants.DriveConstants.GYRO_REVERSED ? -1.0 : 1.0);
     }
 
     public void zeroHeading() {
