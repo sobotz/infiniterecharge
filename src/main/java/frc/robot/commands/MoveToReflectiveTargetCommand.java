@@ -658,7 +658,7 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         // Check that the command should have finished, and that we have a target
-        boolean hasFinished = this.state.hasFinished(this.cfg.getErrorTolerance());
+        boolean hasFinished = this.state.hasFinished(this.cfg.getErrorTolerance(), this.cfg.supportedAxes);
         boolean hasTarget = this.state.hasTarget();
 
         // If there aren't any targets, we're done. Or, if we've moved to the target,
