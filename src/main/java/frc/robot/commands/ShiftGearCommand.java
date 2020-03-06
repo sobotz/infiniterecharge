@@ -30,7 +30,4 @@ public class ShiftGearCommand extends InstantCommand {
   public void initialize() {
     m_driveSubsystem.shiftGear();
   }
-
-  /*public void end(){
-  }*/
 }
