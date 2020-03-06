@@ -360,6 +360,9 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
          */
         DoubleSupplier maximumForwardSpeed;
 
+        /* The set of axes that are supported by the vision command. */
+        boolean[] supportedAxes;
+
         /**
          * Initializes a new Configuration for the MoveToReflectiveTarget command with
          * the given parameters.
@@ -383,6 +386,7 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
             this.errorTolerance = errorTolerance;
             this.maximumSpeed = maximumSpeed;
             this.maximumForwardSpeed = maximumForwardSpeed;
+            this.supportedAxes = new boolean[]{true, true, true};
         }
 
         /**
@@ -428,6 +432,33 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
             this.maximumForwardSpeed = () -> prefs.getDouble(
                     preferencesBuilder.preferencesKey("maximumForwardSpeed").toString(),
                     defaultConfig.maximumForwardSpeed.getAsDouble());
+
+            return this;
+        }
+
+        /**
+         * Disables correction on a particular axis. The available axes are: x, y, z. X represents the rotational offset
+         * about the robot, Y represents secondary horizontal offset (measured in terms of vertical offset along the height of the screen),
+         * and Z represents horizontal offset (how far forward or backwards?) in terms of % area. Of the two methods of horizontal
+         * correction, Z correction is given precedence.
+         *
+         * @param axis the axis that should be disabled for correction capability
+         * @return a copy of the configuration
+         */
+        public Configuration disableCorrectionOnAxis(int axis) {
+            this.supportedAxes[axis] = false;
+
+            return this;
+        }
+
+        /**
+         * Enables correction on a particular axis. By default, all (X, Y, Z) axes are enabled.
+         *
+         * @param axis the axis that should be enabled
+         * @return a copy of the configuration
+         */
+        public Configuration enableCorrectionOnAxis(int axis) {
+            this.supportedAxes[axis] = true;
 
             return this;
         }
@@ -593,23 +624,23 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
 
         double tolerance = this.state.hasInitialHeading ? this.cfg.getErrorTolerance() * 2.5 : this.cfg.getErrorTolerance();
 
-        // Check that we need to correct for Y axis error
+        // Check that we need to correct for Z axis error
         if (this.state.needsCorrectionOnAxis(Axis.Z, this.cfg.getErrorTolerance())
-                && this.state.hasInitialHeading) {
+                && this.state.hasInitialHeading && this.cfg.supportedAxes[2]) {
             // Calculate the gain with the z offset
             double gain = this.cfg.getKp() * offsets[2] * this.cfg.getMaximumForwardSpeed() + this.cfg.getKi();
             // gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
 
             // Move forward and back using the gain variable
             this.m_drivetrain.drive(Type.RHINO, new double[] { -gain, -gain });
-        } else if (this.state.needsCorrectionOnAxis(Axis.X, tolerance)) {
+        } else if (this.state.needsCorrectionOnAxis(Axis.X, tolerance) && this.cfg.supportedAxes[0]) {
             // Calculate the gain with the x offset
             double gain = this.cfg.getKp() * offsets[0] * this.cfg.getMaximumSpeed();
             gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
 
             // Spin in one spot using the provided gain variable
             this.m_drivetrain.drive(Type.RHINO, new double[] { -gain, gain });
-        } else if (this.state.needsCorrectionOnAxis(Axis.Y, this.cfg.getErrorTolerance()) && this.state.hasInitialHeading) {
+        } else if (this.state.needsCorrectionOnAxis(Axis.Y, this.cfg.getErrorTolerance()) && this.state.hasInitialHeading && this.cfg.supportedAxes[2]) {
             // Calculate the gain with the y offset
             double gain = this.cfg.getKp() * offsets[1] * this.cfg.getMaximumForwardSpeed() + this.cfg.getKi();
             gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
