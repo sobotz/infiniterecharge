@@ -107,7 +107,7 @@ public final class Constants {
 		public static final double DEFAULT_MAX_FORWARD_SPEED = 1;
 
 		/* The degree radius of the vision camera. */
-		public static final double[] DEFAULT_BOUNDS = new double[] { 27.0, 20.5, 1.10 };
+		public static final double[] DEFAULT_BOUNDS = new double[] { 27.0, 20.5, 0.7 };
 
 		/*
 		 * The number of calls to the vision command in which there must not be a target
