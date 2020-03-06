@@ -67,7 +67,7 @@ public class SerializerSubsystem extends SubsystemBase {
       // SmartDashboard.putNumber("Sensor 2: ", serializerSensor2.getVoltage()); //
       // true
 
-      if (!previousSSValue && serializerSensor2.getVoltage() < .85) {
+      if (!previousSSValue && serializerSensor2.getVoltage() < .85 && acceptingBalls) {
         // update ballCount
         ballCount++;
         SmartDashboard.putNumber("Ball Count: ", ballCount);
@@ -84,14 +84,13 @@ public class SerializerSubsystem extends SubsystemBase {
        * previousBallCount = ballCount; } }
        */
 
-      /*
-       * if (launcherSensor.getVoltage() < 0.85) {
-       * 
-       * if (ballCount > 0 && !previousLSValue) { // decrement ballCount by 1
-       * ballCount--; // update ballCount //SmartDashboard.putNumber("Ball Count: ",
-       * ballCount); previousLSValue = true; } ballCount =
-       * SmartDashboard.getNumber("Ball Count: ", ballCount); }
-       */
+      if (!previousLSValue && launcherSensor.getVoltage() < .85) { // decrement ballCount by 1
+        ballCount--; // update ballCount
+        SmartDashboard.putNumber("Ball Count: ", ballCount);
+        ballCount = SmartDashboard.getNumber("Ball Count: ", ballCount);
+      }
+      previousLSValue = launcherSensor.getVoltage() < 0.85;
+
       if (serializerSensor1.getVoltage() < .85 && acceptingBalls) {
         serializerMotor1.set(ControlMode.PercentOutput, -SerializerConstants.SERIALIZER_SPEED);
         // SmartDashboard.putBoolean("Belts On: ", true);
@@ -103,7 +102,7 @@ public class SerializerSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Ball Count", ballCount);
       previousBallCount = ballCount;
     } else if (serializerState == 1) {
-      if (!previousSSValue && serializerSensor1.getVoltage() < .85) {
+      if (!previousSSValue && serializerSensor2.getVoltage() < .85) {
         // update ballCount
         ballCount--;
         SmartDashboard.putNumber("Ball Count: ", ballCount);
