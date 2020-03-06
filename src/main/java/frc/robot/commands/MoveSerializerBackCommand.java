@@ -30,6 +30,7 @@ public class MoveSerializerBackCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    this.serializer.serializerState = 2;
     this.serializer.runSerializer(1);
   }
 
@@ -38,6 +39,7 @@ public class MoveSerializerBackCommand extends CommandBase {
   public void end(boolean interrupted) {
     this.serializer.stopSerializer();
     this.serializer.hasBeenMovedForward = false;
+    this.serializer.serializerState = 0;
   }
 
   // Returns true when the command should end.

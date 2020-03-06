@@ -14,10 +14,13 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DeliverIntakeCommand;
 import frc.robot.commands.DifferentialDriveCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.PurgeAndResetCommand;
+import frc.robot.commands.MoveSerializerBackCommand;
 import frc.robot.commands.IntakeDirectionControl;
 import frc.robot.commands.LaunchAllCommand;
 import frc.robot.commands.MoveToReflectiveTargetCommand;
 import frc.robot.commands.ShiftGearCommand;
+import frc.robot.commands.TestLaunchCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DriveSubsystem.MotorControllerConfiguration;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -50,7 +53,7 @@ public class RobotContainer {
     /* The driver's joystick. */
     public static Joystick m_leftDriverJoystick;
 
-	private Joystick m_operatorJoystick;
+    private Joystick m_operatorJoystick;
 
     /* BEGIN COMMANDS */
 
@@ -66,14 +69,16 @@ public class RobotContainer {
     private final DeliverIntakeCommand deliverIntakeCommand;
 
     /* The command used to launch each of the power cells. */
-    private final LaunchAllCommand launchCommand;
+    private final LaunchAllCommand launchAllCommand;
+    private final TestLaunchCommand testLaunchCommand;
+    private final PurgeAndResetCommand purgeSerializerCommand;
+    private final MoveSerializerBackCommand moveSerializerBackCommand;
 
     private SerializerSubsystem m_serializer;
     private LauncherSubsystem m_launcher;
 
     private IntakeDirectionControl fullForwardCommand;
     private IntakeDirectionControl fullReverseCommand;
-    //private TestLaunchCommand m_testLaunchCommand;
 
     /* END COMMANDS */
 
@@ -107,7 +112,6 @@ public class RobotContainer {
                 () -> this.m_leftDriverJoystick.getRawAxis(0), () -> -this.m_leftDriverJoystick.getRawAxis(1),
                 () -> this.m_leftDriverJoystick.getRawAxis(2)).applyPreferences(this.m_preferences);
 
-
         this.driveCommand = new DriveCommand(this.m_drivetrain);
         // SmartDashboard in order to override default values
         this.visionCommand = new MoveToReflectiveTargetCommand(this.m_drivetrain, this.m_vision,
@@ -116,18 +120,17 @@ public class RobotContainer {
         // Setup a command to control the intake subsystem from, using the left driver
         // joystick
         this.deliverIntakeCommand = new DeliverIntakeCommand(this.m_intake);
-        
+
         this.fullForwardCommand = new IntakeDirectionControl(this.m_intake, true);
         this.fullReverseCommand = new IntakeDirectionControl(this.m_intake, false);
 
         this.m_serializer = new SerializerSubsystem();
         this.m_launcher = new LauncherSubsystem();
-        
 
-
-        this.launchCommand = new LaunchAllCommand(this.m_serializer, this.m_launcher);
-
-        //this.m_testLaunchCommand = new TestLaunchCommand(this.m_serializer, this.m_launcher);
+        this.launchAllCommand = new LaunchAllCommand(this.m_serializer, this.m_launcher);
+        this.moveSerializerBackCommand = new MoveSerializerBackCommand(this.m_serializer);
+        this.purgeSerializerCommand = new PurgeAndResetCommand(this.m_serializer, this.m_intake);
+        this.testLaunchCommand = new TestLaunchCommand(this.m_serializer, this.m_launcher);
 
         // Configure the button bindings
         this.configureButtonBindings();
@@ -142,32 +145,45 @@ public class RobotContainer {
         // Changed to A
         JoystickButton activateVisionButton = new JoystickButton(this.m_operatorJoystick, 3);
         // Changed to X
-        // JoystickButton activateIntakeButton = new JoystickButton(this.m_operatorJoystick, 6);
+        // JoystickButton activateIntakeButton = new
+        // JoystickButton(this.m_operatorJoystick, 6);
         // Changed to left trigger (raw axis)
         JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
 
         // Change to left bumper
-        
+
+        JoystickButton launchAllButton = new JoystickButton(this.m_operatorJoystick, 6);
+        JoystickButton testLaunchButton = new JoystickButton(this.m_operatorJoystick, 7);
+
+        JoystickButton purgeButton = new JoystickButton(this.m_operatorJoystick, 8);
+        JoystickButton moveBackButton = new JoystickButton(this.m_operatorJoystick, 9);
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
 
         deliverIntakeButton.toggleWhenPressed(this.deliverIntakeCommand);
 
+        launchAllButton.toggleWhenPressed(this.launchAllCommand);
+
+        moveBackButton.toggleWhenPressed(this.moveSerializerBackCommand);
+
+        testLaunchButton.toggleWhenPressed(this.testLaunchCommand);
+
+        purgeButton.whenPressed(this.purgeSerializerCommand);
+
         // When the left bumper button is pressed, reverse the intake)
-        reverseIntakeButton.whenPressed(this.fullReverseCommand); 
-        // activateIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(true));
+        reverseIntakeButton.whenPressed(this.fullReverseCommand);
+        // activateIntakeButton.whenPressed(() ->
+        // this.intakeControlCommand.setDirection(true));
 
         // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
         activateVisionButton.toggleWhenPressed(this.visionCommand);
 
         // JoystickButton bob = new JoystickButton(m_driveController, 0);
-        //JoystickButton ballPrep = new JoystickButton(this.m_leftDriverJoystick, 1);
-        //ballPrep.toggleWhenPressed(this.m_testLaunchCommand);
+        // JoystickButton ballPrep = new JoystickButton(this.m_leftDriverJoystick, 1);
+        // ballPrep.toggleWhenPressed(this.m_testLaunchCommand);
 
         JoystickButton ballsOut = new JoystickButton(this.m_operatorJoystick, 6);
-        ballsOut.whenHeld(this.launchCommand);
-
-    
+        ballsOut.whenHeld(this.launchAllCommand);
 
         // this.m_intake.setDefaultCommand(intakeControlCommand);
     }
