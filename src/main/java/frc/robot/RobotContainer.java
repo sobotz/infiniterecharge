@@ -55,6 +55,8 @@ public class RobotContainer {
 
     private Joystick m_operatorJoystick;
 
+    private Joystick m_buttonBox;
+
     /* BEGIN COMMANDS */
 
     /* A fallback teleOp command for the robot (arcade drive). */
@@ -105,6 +107,7 @@ public class RobotContainer {
         // Set up the controllers for the teleop command
         this.m_leftDriverJoystick = new Joystick(0);
         this.m_operatorJoystick = new Joystick(1);
+        this.m_buttonBox = new Joystick(2);
 
         // Set up an alternative teleop command that uses arcade drive; use just one
         // joystick
@@ -152,11 +155,11 @@ public class RobotContainer {
 
         // Change to left bumper
 
-        JoystickButton launchAllButton = new JoystickButton(this.m_operatorJoystick, 6);
-        JoystickButton testLaunchButton = new JoystickButton(this.m_operatorJoystick, 7);
+        JoystickButton launchAllButton = new JoystickButton(this.m_buttonBox, 4);
+        JoystickButton testLaunchButton = new JoystickButton(this.m_buttonBox, 5);
 
-        JoystickButton purgeButton = new JoystickButton(this.m_operatorJoystick, 8);
-        JoystickButton moveBackButton = new JoystickButton(this.m_operatorJoystick, 9);
+        JoystickButton purgeButton = new JoystickButton(this.m_buttonBox, 6);
+        JoystickButton moveBackButton = new JoystickButton(this.m_buttonBox, 7);
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
 
