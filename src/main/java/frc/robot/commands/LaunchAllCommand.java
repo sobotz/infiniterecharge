@@ -14,7 +14,7 @@ import frc.robot.subsystems.SerializerSubsystem;
 public class LaunchAllCommand extends CommandBase {
   private SerializerSubsystem serializer;
   private LauncherSubsystem launcher;
-  private int nFramesRun;
+  // private int nFramesRun;
 
   /**
    * Creates a new LaunchAllCommand.
@@ -23,34 +23,34 @@ public class LaunchAllCommand extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     this.serializer = serializer1;
     this.launcher = launcher1;
-    this.nFramesRun = 0;
+    // this.nFramesRun = 0;
     addRequirements(serializer, launcher);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    this.nFramesRun = 0;
+    // this.nFramesRun = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (!this.serializer.hasBeenMovedForward) {
+      // moves belts forward
+      this.serializer.moveBeltsForward();
+      this.serializer.hasBeenMovedForward = true;
+    }
     this.launcher.startLauncher();
-    this.launcher.startRollers();
-    this.serializer.runSerializer();
+    // checks if launcher Motor is up to speed
+    if (this.launcher.launcherMotor.getActiveTrajectoryVelocity() > 7
+        && this.launcher.launcherMotor2.getActiveTrajectoryVelocity() > 7) {
+      // starts rollers and serializer
+      this.serializer.runSerializer(-1);
+      this.launcher.startRollers();
+    }
 
-    this.nFramesRun++;
-
-    // while (this.serializer.ballCount != 0) {
-    //   this.launcher.stopRollers();
-    //   while (this.launcher.launcherMotor.getSelectedSensorVelocity() !=  Constants.LAUNCHER_VELOCITY_MS) {
-    //     Timer.delay(0.01); //check
-    //   }
-    //   this.launcher.startRollers();
-    //   Timer.delay(0.2); //check
-    // }
- 
+    // this.nFramesRun++;
   }
 
   // Called once the command ends or is interrupted.
@@ -58,12 +58,15 @@ public class LaunchAllCommand extends CommandBase {
   public void end(boolean interrupted) {
     this.launcher.stopRollers();
     this.launcher.stopLauncher();
-    this.nFramesRun = 0;
+    this.serializer.stopSerializer();
+    // this.nFramesRun = 0;
+    this.serializer.hasBeenMovedForward = false;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-     return this.nFramesRun > 500;
+    // return this.nFramesRun > 500;
+    return this.serializer.ballCount == 0;
   }
 }

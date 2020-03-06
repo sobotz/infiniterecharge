@@ -8,20 +8,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.SerializerSubsystem;
 
-public class TestLaunchCommand extends CommandBase {
-
+public class MoveSerializerBackCommand extends CommandBase {
+  /**
+   * Creates a new moveSerializerBackCommand.
+   */
   private SerializerSubsystem serializer;
-  private LauncherSubsystem launcher;
 
-  public TestLaunchCommand(SerializerSubsystem serializer1, LauncherSubsystem launcher1) {
+  public MoveSerializerBackCommand(SerializerSubsystem serializer) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.serializer = serializer1;
-    this.launcher = launcher1;
-    addRequirements(serializer);
-    addRequirements(launcher);
+    this.serializer = serializer;
+    addRequirements(this.serializer);
   }
 
   // Called when the command is initially scheduled.
@@ -32,35 +30,19 @@ public class TestLaunchCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // checks if balls have not been moved forward
-    if (!this.serializer.hasBeenMovedForward) {
-      // moves belts forward
-      this.serializer.moveBeltsForward();
-      this.serializer.hasBeenMovedForward = true;
-    }
-    // starts launcher and serializer
-    this.launcher.startLauncher();
-    // checks if launcher Motor is up to speed
-    if (this.launcher.launcherMotor.getActiveTrajectoryVelocity() > 7
-        && this.launcher.launcherMotor2.getActiveTrajectoryVelocity() > 7) {
-      // starts rollers and serializer
-      this.serializer.runSerializer(-1);
-      this.launcher.startRollers();
-    }
+    this.serializer.runSerializer(1);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // stops rollers, launchers and serializer
-    this.launcher.stopRollers();
-    this.launcher.stopLauncher();
     this.serializer.stopSerializer();
+    this.serializer.hasBeenMovedForward = false;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return this.serializer.ballCount != this.serializer.previousBallCount;
+    return this.serializer.serializerSensor2.getVoltage() < 0.85;
   }
 }
