@@ -176,13 +176,13 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
         /**
          * Checks whether or not the target has been acquired.
          **/
-        public boolean hasFinished(double errorTolerance) {
+        public boolean hasFinished(double errorTolerance, boolean[] enabledAxes) {
             // Check if we need to correct for the x values
             boolean needsCorrectionX = needsCorrectionOnAxis(Axis.X, errorTolerance);
             boolean needsCorrectionZ = needsCorrectionOnAxis(Axis.Z, errorTolerance);
 
-            if (!needsCorrectionX) {
-                if (!needsCorrectionZ) {
+            if (!needsCorrectionX || !enabledAxes[0]) {
+                if (!needsCorrectionZ || !enabledAxes[2]) {
                     this.nCorrectionlessFrames++;
                 }
 
