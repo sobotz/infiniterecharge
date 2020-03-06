@@ -50,14 +50,13 @@ public class RobotContainer {
     /* The driver's joystick. */
     public static Joystick m_leftDriverJoystick;
 
-	private Joystick m_operatorJoystick;
+    /* The operator's joystick. */
+    private Joystick m_operatorJoystick;
 
     /* BEGIN COMMANDS */
 
     /* A fallback teleOp command for the robot (arcade drive). */
     private final DifferentialDriveCommand fallbackTeleopCommand;
-
-    private final DriveCommand driveCommand;
 
     /* The current autonomous command for the robot. */
     private final MoveToReflectiveTargetCommand visionCommand;
@@ -85,12 +84,12 @@ public class RobotContainer {
 
         // Make a motor controller config for the drivetrain
         MotorControllerConfiguration motorCfg = new MotorControllerConfiguration(
-                Constants.DriveConstants.LEFT_FRONT_MOTOR, Constants.DriveConstants.RIGHT_FRONT_MOTOR,
-                Constants.DriveConstants.LEFT_BACK_MOTOR, Constants.DriveConstants.RIGHT_BACK_MOTOR);
+            Constants.DriveConstants.LEFT_FRONT_MOTOR, Constants.DriveConstants.RIGHT_FRONT_MOTOR,
+            Constants.DriveConstants.LEFT_BACK_MOTOR, Constants.DriveConstants.RIGHT_BACK_MOTOR);
 
         // Keep the light on the limelight on at all times
         LimelightConfiguration visionCfg = new LimelightConfiguration(VisionSubsystem.LEDMode.ON)
-                .applyPreferences(this.m_preferences);
+        .applyPreferences(this.m_preferences);
 
         // Initialize each of the subsystems
         this.m_drivetrain = new DriveSubsystem(motorCfg);
@@ -104,11 +103,8 @@ public class RobotContainer {
         // Set up an alternative teleop command that uses arcade drive; use just one
         // joystick
         this.fallbackTeleopCommand = new DifferentialDriveCommand(this.m_drivetrain,
-                () -> this.m_leftDriverJoystick.getRawAxis(0), () -> -this.m_leftDriverJoystick.getRawAxis(1),
-                () -> this.m_leftDriverJoystick.getRawAxis(2)).applyPreferences(this.m_preferences);
+                () -> this.m_leftDriverJoystick.getRawAxis(0), () -> -this.m_leftDriverJoystick.getRawAxis(1)).applyPreferences(this.m_preferences);
 
-
-        this.driveCommand = new DriveCommand(this.m_drivetrain);
         // SmartDashboard in order to override default values
         this.visionCommand = new MoveToReflectiveTargetCommand(this.m_drivetrain, this.m_vision,
                 MoveToReflectiveTargetCommand.Configuration.getDefault().applyPreferences(this.m_preferences));
@@ -116,14 +112,12 @@ public class RobotContainer {
         // Setup a command to control the intake subsystem from, using the left driver
         // joystick
         this.deliverIntakeCommand = new DeliverIntakeCommand(this.m_intake);
-        
+
         this.fullForwardCommand = new IntakeDirectionControl(this.m_intake, true);
         this.fullReverseCommand = new IntakeDirectionControl(this.m_intake, false);
 
         this.m_serializer = new SerializerSubsystem();
         this.m_launcher = new LauncherSubsystem();
-        
-
 
         this.launchCommand = new LaunchAllCommand(this.m_serializer, this.m_launcher);
 
@@ -147,14 +141,14 @@ public class RobotContainer {
         JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
 
         // Change to left bumper
-        
+
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
 
         deliverIntakeButton.toggleWhenPressed(this.deliverIntakeCommand);
 
         // When the left bumper button is pressed, reverse the intake)
-        reverseIntakeButton.whenPressed(this.fullReverseCommand); 
+        reverseIntakeButton.whenPressed(this.fullReverseCommand);
         // activateIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(true));
 
         // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
@@ -167,13 +161,13 @@ public class RobotContainer {
         JoystickButton ballsOut = new JoystickButton(this.m_operatorJoystick, 6);
         ballsOut.whenHeld(this.launchCommand);
 
-    
+
 
         // this.m_intake.setDefaultCommand(intakeControlCommand);
     }
 
     public Command getTeleopCommand() {
         // Use differential drive
-        return this.driveCommand;
+        return this.fallbackTeleopCommand;
     }
 }

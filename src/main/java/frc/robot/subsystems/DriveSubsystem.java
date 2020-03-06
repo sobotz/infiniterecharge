@@ -29,9 +29,6 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
         /* The front left motor controller */
         WPI_TalonFX frontLeftController, frontRightController, backLeftController, backRightController;
 
-        /* Controller groups for the left and right sides of the robot */
-        SpeedControllerGroup right, left;
-
         /**
          * Initializes a new MotorControllerConfiguration with the given ports.
          *
@@ -47,6 +44,12 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
             this.frontRightController = new WPI_TalonFX(frontRightControllerPort);
             this.backLeftController = new WPI_TalonFX(backLeftControllerPort);
             this.backRightController = new WPI_TalonFX(backRightControllerPort);
+
+            // Reset the configuration of each of the talons
+            this.frontLeftController.configFactoryDefault();
+            this.frontRightController.configFactoryDefault();
+            this.backLeftController.configFactoryDefault();
+            this.backRightController.configFactoryDefault();
         }
 
         /**

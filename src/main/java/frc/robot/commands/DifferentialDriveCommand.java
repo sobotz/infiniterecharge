@@ -22,8 +22,8 @@ public class DifferentialDriveCommand extends CommandBase
     private final DriveSubsystem m_drivetrain;
 
     /* The x and y axis inputs from the joystick. */
-    private final DoubleSupplier xInput, yInput, zInput;
-    private DoubleSupplier finalX, finalY, finalZ;
+    private final DoubleSupplier xInput, yInput;
+    private DoubleSupplier finalX, finalY;
 
     /* A speed limitation variable provided through smart dashboard. */
     private DoubleSupplier maximumSpeed;
@@ -38,9 +38,7 @@ public class DifferentialDriveCommand extends CommandBase
      * @param xInput     input from the x axis of the input joystick
      * @param zInput     rotational input from the z axis of the input joystick
      */
-    public DifferentialDriveCommand(DriveSubsystem drivetrain, DoubleSupplier xInput, DoubleSupplier yInput,
-            DoubleSupplier zInput) {
-
+    public DifferentialDriveCommand(DriveSubsystem drivetrain, DoubleSupplier xInput, DoubleSupplier yInput) {
         // Use the provided drivetrain
         this.m_drivetrain = drivetrain;
 
@@ -53,10 +51,8 @@ public class DifferentialDriveCommand extends CommandBase
         // Use the axis inputs that the user provided
         this.xInput = xInput;
         this.yInput = yInput;
-        this.zInput = zInput;
         this.finalX = this.xInput;
         this.finalY = this.yInput;
-        this.finalZ = this.zInput;
     }
 
     /**
@@ -75,7 +71,6 @@ public class DifferentialDriveCommand extends CommandBase
 
         this.finalX = () -> this.maximumSpeed.getAsDouble() * this.xInput.getAsDouble();
         this.finalY = () -> this.maximumSpeed.getAsDouble() * this.yInput.getAsDouble();
-        this.finalZ = () -> this.maximumSpeed.getAsDouble() * this.zInput.getAsDouble();
 
         // Use all of the previously provided configuration variables, aside from the
         // maximum speed
@@ -92,7 +87,7 @@ public class DifferentialDriveCommand extends CommandBase
 
         // Drive the drivetrain with a differential drive config
         this.m_drivetrain.drive(Type.DIFFERENTIAL,
-                new double[] { Math.pow(this.finalX.getAsDouble(), inputAmplificationFactor), Math.pow(this.finalY.getAsDouble(), inputAmplificationFactor), Math.pow(this.finalZ.getAsDouble(), inputAmplificationFactor) });
+                new double[] { Math.pow(this.finalX.getAsDouble(), inputAmplificationFactor), Math.pow(this.finalY.getAsDouble(), inputAmplificationFactor) });
     }
 
     /**
