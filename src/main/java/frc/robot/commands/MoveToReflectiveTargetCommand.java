@@ -212,8 +212,7 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
                 return Math.abs(this.targetOffsets.get(1).getAverage())
                         / Constants.VisionConstants.DEFAULT_BOUNDS[1] > errorTolerance;
             default:
-                return Constants.VisionConstants.DEFAULT_BOUNDS[2]
-                        - this.targetOffsets.get(2).getAverage() > errorTolerance;
+                return Math.abs(Constants.VisionConstants.DEFAULT_BOUNDS[2] - this.targetOffsets.get(2).getAverage()) > Math.abs(Constants.VisionConstants.DEFAULT_BOUNDS[2] - ((1 + errorTolerance) * Constants.VisionConstants.DEFAULT_BOUNDS[2]));
             }
         }
 
