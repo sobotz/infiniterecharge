@@ -52,6 +52,7 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
             this.frontRightController.configFactoryDefault();
             this.backLeftController.configFactoryDefault();
             this.backRightController.configFactoryDefault();
+
         }
 
         /**
@@ -151,5 +152,18 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
 
     public void zeroHeading() {
         ahrs.zeroYaw();
+    }
+
+    public double inchesToTalonUnits(double inches){
+        return (inches / (Math.PI * DriveConstants.WHEEL_DIAMETER)) * 2048.0;
+    }
+
+    public void driveToTarget(double distance, int errorMargin) {
+        this.motorControllers.backLeftController.follow(this.motorControllers.frontLeftController);
+        this.motorControllers.backRightController.follow(this.motorControllers.frontRightController);
+
+        double targetPositionRotations = inchesToTalonUnits(distance);
+        this.motorControllers.frontLeftController.set(ControlMode.Position, targetPositionRotations);
+        this.motorControllers.frontRightController.set(ControlMode.Position, targetPositionRotations);
     }
 }

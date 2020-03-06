@@ -36,7 +36,10 @@ public final class Constants {
 
 		public static final boolean GYRO_REVERSED = false;
 
-		public static final double DISTANCE_PER_PULSE= (64910.5/100)/2048;
+		public static final double DISTANCE_PER_PULSE = (1/2048)*(6*Math.PI);
+		public static final double WHEEL_DIAMETER = 6;
+		
+		//(64910.5/100)/2048;
 	}
 
 	public static final class IntakeConstants {

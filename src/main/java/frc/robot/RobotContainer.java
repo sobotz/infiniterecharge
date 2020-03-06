@@ -151,7 +151,7 @@ public class RobotContainer {
         JoystickButton reverseIntakeButton = new JoystickButton(this.m_buttonBox, 1);
         JoystickButton launchBallsButton = new JoystickButton(this.m_operatorJoystick, 6);
         JoystickButton serializerForwardButton = new JoystickButton(this.m_buttonBox, 2);
-        JoystickButton serializerReverseButton = new JoystikButton(this.m_buttonBox,3);
+        JoystickButton serializerReverseButton = new JoystickButton(this.m_buttonBox,3);
         
         /* Shifts between low and high gear when the trigger on the driver joystick is pressed*/
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
@@ -171,7 +171,7 @@ public class RobotContainer {
         /*When the right bumper is held, run the serializer, feed, and launcher to shoot balls */
         launchBallsButton.whenHeld(this.launchCommand);
 
-        serializerForwardButton.toggleWhenPressed(this.)
+        //serializerForwardButton.toggleWhenPressed(this. )
 
         //JoystickButton bob = new JoystickButton(m_driveController, 0);
         //JoystickButton ballPrep = new JoystickButton(this.m_leftDriverJoystick, 1);
