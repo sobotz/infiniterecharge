@@ -85,9 +85,25 @@ public class DifferentialDriveCommand extends CommandBase
         // Get the factor by which the input should be amplified
         double inputAmplificationFactor = this.amplificationFactor.getAsDouble();
 
+        // Get the readings from the joystick input
+        double[] inputs = {this.finalX.getAsDouble(), this.finalY.getAsDouble()};
+
+        // Normalize each of the inputs, with consideration to the provided amplifciation factor
+        for (int i = 0; i < inputs.length; i++) {
+            // Normalize the input
+            double normalized = Math.pow(inputs[i], inputAmplificationFactor);
+            
+            // Reapply a negative sign, if it exists in the original input
+            if (inputs[i] < 0 && normalized >= 0) {
+                normalized *= -1;
+            }
+
+            // Put the normalized input back into the array
+            inputs[i] = normalized;
+        }
+
         // Drive the drivetrain with a differential drive config
-        this.m_drivetrain.drive(Type.DIFFERENTIAL,
-                new double[] { Math.pow(this.finalX.getAsDouble(), inputAmplificationFactor), Math.pow(this.finalY.getAsDouble(), inputAmplificationFactor) });
+        this.m_drivetrain.drive(Type.DIFFERENTIAL, inputs);
     }
 
     /**

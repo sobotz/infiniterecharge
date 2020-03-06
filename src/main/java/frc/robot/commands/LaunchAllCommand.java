@@ -37,8 +37,11 @@ public class LaunchAllCommand extends CommandBase {
   @Override
   public void execute() {
     this.launcher.startLauncher();
-    this.launcher.startRollers();
-    this.serializer.runSerializer();
+
+    if (this.nFramesRun > 50) {
+      this.launcher.startRollers();
+      this.serializer.runSerializer();
+    }
 
     this.nFramesRun++;
 
