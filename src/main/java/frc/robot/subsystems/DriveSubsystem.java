@@ -2,6 +2,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -32,6 +38,9 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
         /* Controller groups for the left and right sides of the robot */
         SpeedControllerGroup right, left;
 
+        /* Config objets for motor ontrollers */
+        TalonFXConfiguration leftConfig, rightConfig;
+
         /**
          * Initializes a new MotorControllerConfiguration with the given ports.
          *
@@ -40,19 +49,79 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
          * @param backLeftControllerPort   the port of the back left motor controller
          * @param backRightControllerPort  the port of the back right motor controller
          */
-        public MotorControllerConfiguration(int frontLeftControllerPort, int frontRightControllerPort,
-                int backLeftControllerPort, int backRightControllerPort) {
+        public MotorControllerConfiguration(final int frontLeftControllerPort, final int frontRightControllerPort,
+                final int backLeftControllerPort, final int backRightControllerPort) {
             // Initialize each of the talons
             this.frontLeftController = new WPI_TalonFX(frontLeftControllerPort);
             this.frontRightController = new WPI_TalonFX(frontRightControllerPort);
             this.backLeftController = new WPI_TalonFX(backLeftControllerPort);
             this.backRightController = new WPI_TalonFX(backRightControllerPort);
 
+            //final TalonFXInvertType leftInvert = TalonFXInvertType.CounterClockwise; //Same as invert = "fasle"
+	        //final TalonFXInvertType rightInvert = TalonFXInvertType.Clockwise; //Same as invert = "true"
+
+            this.leftConfig = new TalonFXConfiguration();
+            this.rightConfig = new TalonFXConfiguration();
+
+            /*this.frontLeftController.setInverted(leftInvert);
+            this.backLeftController.setInverted(leftInvert);
+            this.frontRightController.setInverted(rightInvert);
+            this.backRightController.setInverted(rightInvert);
+            */
+
+            /* local feedbak source */
+            leftConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
+
+            /*Configure the front left talon sensor as the remote sensor for the right talons */ 
+            rightConfig.remoteFilter1.remoteSensorDeviceID = this.frontLeftController.getDeviceID();
+            rightConfig.remoteFilter1.remoteSensorSource =  RemoteSensorSource.TalonFX_SelectedSensor;
+
+            setRobotTurnConfigs(rightConfig);
+
+            leftConfig.peakOutputForward = +1.0;
+            leftConfig.peakOutputReverse = -1.0;
+            rightConfig.peakOutputForward = 1.0;
+            rightConfig.peakOutputReverse = -1.0;
+
+            //rightConfig.slot0.kF = DriveConstants.DISTANCE_F;
+		    rightConfig.slot0.kP = DriveConstants.DISTANCE_P;
+		    rightConfig.slot0.kI = DriveConstants.DISTANCE_I;
+		    rightConfig.slot0.kD = DriveConstants.DISTANCE_D;
+		    rightConfig.slot0.integralZone = DriveConstants.DISTANCE_Iz;
+            rightConfig.slot0.closedLoopPeakOutput = DriveConstants.DISTANCE_PEAK_OUTPUT;
+            
+            /* FPID Gains for turn servo */
+		    //rightConfig.slot1.kF = DriveConstants.DRIVE_STRAIGHT_F;
+		    rightConfig.slot1.kP = DriveConstants.DRIVE_STRAIGHT_P;
+		    rightConfig.slot1.kI = DriveConstants.DRIVE_STRAIGHT_I;
+		    rightConfig.slot1.kD = DriveConstants.DRIVE_STRAIGHT_D;
+		    rightConfig.slot1.integralZone = DriveConstants.DRIVE_STRAIGHT_IZ;
+            rightConfig.slot1.closedLoopPeakOutput = DriveConstants.DRIVE_STRAIGHT_PEAK_OUTPUT;
+        
+
+            final int closedLoopTimeMs = 1;
+		    rightConfig.slot0.closedLoopPeriod = closedLoopTimeMs;
+            rightConfig.slot1.closedLoopPeriod = closedLoopTimeMs;
+
+
+            this.frontLeftController.configAllSettings(leftConfig);
+            this.backLeftController.configAllSettings(leftConfig);
+            this.frontRightController.configAllSettings(rightConfig);
+            this.backRightController.configAllSettings(rightConfig);
+
+            //zeroSensors();
+
+
+
+            /*
             this.frontLeftController.configFactoryDefault();
             this.frontRightController.configFactoryDefault();
             this.backLeftController.configFactoryDefault();
             this.backRightController.configFactoryDefault();
+            */
 
+
+            
         }
 
         /**
@@ -62,7 +131,7 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
          * @param leftPercentageSpeed  the desired speed of the left motor controllers
          * @param rightPercentageSpeed the desired speed of the right motor controllers
          */
-        void drive(Type driveType, double leftPercentageSpeed, double rightPercentageSpeed) {
+        void drive(final Type driveType, final double leftPercentageSpeed, final double rightPercentageSpeed) {
             if (driveType.equals(Type.DIFFERENTIAL)) {
                 // Treat the rightPercentageSpeed as a rotational parameter
                 this.frontLeftController.set(ControlMode.PercentOutput, leftPercentageSpeed,
@@ -91,15 +160,19 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
     private boolean hasShifted;
 
     /* The pneumatic doulbe solenoid used to shift gears. */
-    private DoubleSolenoid gearShifter;
+    private final DoubleSolenoid gearShifter;
 
     /* The navx interface. */
     private final AHRS ahrs;
 
+    private double lockedDistance = 0;
+
+    private double targetAngle;
+
     /**
      * Initializes a new DriveSubsystem.
      */
-    public DriveSubsystem(MotorControllerConfiguration motorConfig) {
+    public DriveSubsystem(final MotorControllerConfiguration motorConfig) {
         // Use the motor controller configuration provided to us by the calling command
         this.motorControllers = motorConfig;
         this.hasShifted = false;
@@ -124,7 +197,7 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
      * @param driveType        the manner in which the robot should drive
      * @param percentageSpeeds the percentage speed values to drive with
      */
-    public void drive(Type driveType, double[] percentageSpeeds) {
+    public void drive(final Type driveType, final double[] percentageSpeeds) {
         // Use the preferred drive to drive the robot
         this.motorControllers.drive(driveType, percentageSpeeds[0], percentageSpeeds[1]);
     }
@@ -154,16 +227,69 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
         ahrs.zeroYaw();
     }
 
-    public double inchesToTalonUnits(double inches){
+    public double inchesToTalonUnits(final double inches){
         return (inches / (Math.PI * DriveConstants.WHEEL_DIAMETER)) * 2048.0;
     }
 
-    public void driveToTarget(double distance, int errorMargin) {
+    public void setDriveToTargetValues(){
+        this.lockedDistance = motorControllers.frontRightController.getSelectedSensorPosition(0);
+        this.targetAngle = motorControllers.frontRightController.getSelectedSensorPosition(1);
+    
+        this.motorControllers.frontRightController.selectProfileSlot(DriveConstants.kSlot_Distanc, DriveConstants.PID_PRIMARY);
+        this.motorControllers.frontRightController.selectProfileSlot(DriveConstants.kSlot_Turning, DriveConstants.PID_DRIVE_STRAIGHT);
+
+    }
+
+    public boolean driveToTarget(double distance) {
         this.motorControllers.backLeftController.follow(this.motorControllers.frontLeftController);
         this.motorControllers.backRightController.follow(this.motorControllers.frontRightController);
 
-        double targetPositionRotations = inchesToTalonUnits(distance);
-        this.motorControllers.frontLeftController.set(ControlMode.Position, targetPositionRotations);
-        this.motorControllers.frontRightController.set(ControlMode.Position, targetPositionRotations);
+        final double targetPositionRotations = inchesToTalonUnits(distance);
+
+        //this.motorControllers.frontLeftController.set(ControlMode.Position, targetPositionRotations);
+        //this.motorControllers.frontRightController.set(ControlMode.Position, targetPositionRotations);
+
+        final double target_sensorUnits = targetPositionRotations + lockedDistance;
+        final double target_turn = targetAngle;
+
+        this.motorControllers.frontRightController.set(TalonFXControlMode.Position, target_sensorUnits, DemandType.AuxPID, target_turn);
+        this.motorControllers.frontRightController.follow(motorControllers.frontRightController, FollowerType.AuxOutput1);
+
+        return (this.motorControllers.frontRightController.getSelectedSensorPosition(0) == target_sensorUnits);
     }
+
+    public void zeroSensors() {
+		motorControllers.frontLeftController.getSensorCollection().setIntegratedSensorPosition(0, DriveConstants.TIMEOUT_MS);
+		motorControllers.frontRightController.getSensorCollection().setIntegratedSensorPosition(0, DriveConstants.TIMEOUT_MS);
+		System.out.println("[Integrated Sensors] All sensors are zeroed.\n");
+    }
+
+    public static void setRobotTurnConfigs( final TalonFXConfiguration masterConfig){
+
+		//if (masterInvertType == TalonFXInvertType.Clockwise){
+
+			/*masterConfig.sum0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Integrated Sensor
+			masterConfig.sum1Term = TalonFXFeedbackDevice.RemoteSensor1.toFeedbackDevice();   //Aux Selected Sensor
+			masterConfig.auxiliaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorSum.toFeedbackDevice(); //Sum0 + Sum1
+
+            masterConfig.auxPIDPolarity = true;
+            */
+		//} else {
+			/* Master is not inverted, both sides are positive so we can diff them. */
+			masterConfig.diff0Term = TalonFXFeedbackDevice.RemoteSensor1.toFeedbackDevice();    //Aux Selected Sensor
+			masterConfig.diff1Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local IntegratedSensor
+			masterConfig.auxiliaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorDifference.toFeedbackDevice(); //Sum0 + Sum1
+			/* With current diff terms, a counterclockwise rotation results in negative heading with a right master */
+			masterConfig.auxPIDPolarity = true;
+		//}
+		masterConfig.auxiliaryPID.selectedFeedbackCoefficient = 3600 / 51711; //turn travel unts per rotation / enocder units per rotation
+	}
+    
+   /* this.lockedDistance = motorControllers.frontRightController.getSelectedSensorPosition(0);
+    this.frontRightController.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
+
+    double target_sensorUnits = forward * Constants.kSensorUnitsPerRotation * Constants.kRotationsToTravel  + _lockedDistance;
+    _rightMaster.set(TalonFXControlMode.Position, target_sensorUnits, DemandType.AuxPID, target_turn);
+    _leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
+    */
 }

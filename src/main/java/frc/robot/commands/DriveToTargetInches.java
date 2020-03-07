@@ -8,48 +8,47 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SerializerSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
 
-public class RunSerializerCommand extends CommandBase {
-  SerializerSubsystem m_serializer;
-  boolean direction;
-
+public class DriveToTargetInches extends CommandBase {
+  DriveSubsystem m_drive;
+  double target; 
+  boolean isFinished = false;
   /**
-   * Creates a new RunSerializerCommand.
+   * Creates a new DriveToTargetInches.
    */
-  public RunSerializerCommand(SerializerSubsystem subsystem, boolean direction) {
-    this.m_serializer = subsystem;
-    this.direction = direction;
+  public DriveToTargetInches(DriveSubsystem subsystem, double distance) {
+    m_drive = subsystem; 
+    target = distance;
 
-    addRequirements(m_serializer);
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(m_drive);
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    m_drive.zeroSensors();
+    m_drive.setDriveToTargetValues();
+    System.out.println("initialize");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(this.direction){
-      this.m_serializer.runSerializer(-1);
-    }else{
-      this.m_serializer.runSerializer(1);
-    }
+    isFinished = m_drive.driveToTarget(target);
+    System.out.println(isFinished);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    this.m_serializer.stopSerializer();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isFinished;
   }
 }

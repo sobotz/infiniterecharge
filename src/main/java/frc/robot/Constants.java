@@ -20,21 +20,52 @@ public final class Constants {
 	}
 
 	public static final class DriveConstants {
-		public static final int LEFT_FRONT_MOTOR = 2;
-		public static final int LEFT_BACK_MOTOR = 1;
-		public static final int RIGHT_FRONT_MOTOR = 4;
-		public static final int RIGHT_BACK_MOTOR = 3;
+		//changed for d bot testing 
+		public static final int LEFT_FRONT_MOTOR = 0; //2
+		public static final int LEFT_BACK_MOTOR = 1; //1
+		public static final int RIGHT_FRONT_MOTOR = 2; //4
+		public static final int RIGHT_BACK_MOTOR = 3; //3
 		public static final int GEAR_SHIFT_DEPLOY = 1;
 		public static final int GEAR_SHIFT_RETRACT = 0;
 
-		public static final double TURN_P = .02;
-		public static final double TURN_I = 0;
-		public static final double TURN_D = 0;
+
+		public static final double TURN_P = 0.02;
+		public static final double TURN_I = 0.0;
+		public static final double TURN_D = 0.0; 
 
 		public static final double TURN_RATE_TOLERANCE = 4; // degrees
 		public static final double TURN_TO_TOLERANCE = 4; // degrees per sec
 
 		public static final boolean GYRO_REVERSED = false;
+
+
+		public static final double DISTANCE_P = 0.1;
+		public static final double DISTANCE_I = 0.0;
+		public static final double DISTANCE_D = 0.0;
+		public static final int DISTANCE_Iz = 100;
+		public static final double DISTANCE_PEAK_OUTPUT = .5;
+
+		//public static final double DRIVE_STRAIGHT_F = 0.0;
+		public static final double DRIVE_STRAIGHT_P = 0.1;
+		public static final double DRIVE_STRAIGHT_I = 0.0;
+		public static final double DRIVE_STRAIGHT_D = 0.0;
+		public static final int DRIVE_STRAIGHT_IZ = 200;
+		public static final double DRIVE_STRAIGHT_PEAK_OUTPUT = 1.00;
+
+		public final static int TIMEOUT_MS = 30;
+
+
+		public final static int PID_PRIMARY = 0;
+		public final static int PID_DRIVE_STRAIGHT = 1;
+
+
+
+
+		public final static int SLOT_0 = 0;
+		public final static int SLOT_1 = 1;
+
+		public final static int kSlot_Distanc = SLOT_0;
+		public final static int kSlot_Turning = SLOT_1;
 
 		public static final double DISTANCE_PER_PULSE = (1/2048)*(6*Math.PI);
 		public static final double WHEEL_DIAMETER = 6;
@@ -66,7 +97,7 @@ public final class Constants {
 		public static final int SERIALIZER_SENSOR_3 = 2;
 		public static final int SERIALIZER_MOTOR = 7;
         public static final int FEED_MOTOR = 10;
-		public static final double SERIALIZER_SPEED = 0.3;
+		public static final double SERIALIZER_SPEED = 0.4;
 	}
 
 	/**

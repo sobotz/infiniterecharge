@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DeliverIntakeCommand;
 import frc.robot.commands.DifferentialDriveCommand;
+import frc.robot.commands.DriveToTargetInches;
 import frc.robot.commands.IntakeDirectionControl;
 import frc.robot.commands.LaunchAllCommand;
 import frc.robot.commands.MoveToReflectiveTargetCommand;
+import frc.robot.commands.RunSerializerCommand;
 import frc.robot.commands.ShiftGearCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DriveSubsystem.MotorControllerConfiguration;
@@ -81,6 +83,12 @@ public class RobotContainer {
     /* The command used to run the intake forward. */
     private final IntakeDirectionControl intakeReverseCommand;
 
+    private final DriveToTargetInches encoderCommand;
+
+    private final RunSerializerCommand serializerForward;
+
+    private final RunSerializerCommand serializerReverse;
+
     
 
     /* END COMMANDS */
@@ -134,6 +142,12 @@ public class RobotContainer {
         /* Set up a command that launches balls from the serializer */
         this.launchCommand = new LaunchAllCommand(this.m_serializer, this.m_launcher);
 
+        this.serializerForward = new RunSerializerCommand(m_serializer, true);
+
+        this.serializerReverse = new RunSerializerCommand(m_serializer, false);
+
+
+        this.encoderCommand = new DriveToTargetInches(m_drivetrain,  100);
         //this.m_testLaunchCommand = new TestLaunchCommand(this.m_serializer, this.m_launcher);
 
         // Configure the button bindings
@@ -152,6 +166,7 @@ public class RobotContainer {
         JoystickButton launchBallsButton = new JoystickButton(this.m_operatorJoystick, 6);
         JoystickButton serializerForwardButton = new JoystickButton(this.m_buttonBox, 2);
         JoystickButton serializerReverseButton = new JoystickButton(this.m_buttonBox,3);
+        JoystickButton enoderButton = new JoystickButton(m_leftDriverJoystick, 12);
         
         /* Shifts between low and high gear when the trigger on the driver joystick is pressed*/
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
@@ -171,12 +186,17 @@ public class RobotContainer {
         /*When the right bumper is held, run the serializer, feed, and launcher to shoot balls */
         launchBallsButton.whenHeld(this.launchCommand);
 
+        serializerForwardButton.whenHeld(serializerForward);
+
+        serializerReverseButton.whenHeld(serializerReverse);
+
+        enoderButton.whenPressed(this.encoderCommand);
+
         //serializerForwardButton.toggleWhenPressed(this. )
 
         //JoystickButton bob = new JoystickButton(m_driveController, 0);
         //JoystickButton ballPrep = new JoystickButton(this.m_leftDriverJoystick, 1);
         //ballPrep.toggleWhenPressed(this.m_testLaunchCommand);
-        // this.m_intake.setDefaultCommand(intakeControlCommand);
     }
 
     public Command getTeleopCommand() {
