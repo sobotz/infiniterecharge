@@ -4,8 +4,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FollowerType;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
@@ -56,17 +58,17 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
             this.backLeftController = new WPI_TalonFX(backLeftControllerPort);
             this.backRightController = new WPI_TalonFX(backRightControllerPort);
 
-            //final TalonFXInvertType leftInvert = TalonFXInvertType.CounterClockwise; //Same as invert = "fasle"
-	        //final TalonFXInvertType rightInvert = TalonFXInvertType.Clockwise; //Same as invert = "true"
+            final TalonFXInvertType leftInvert = TalonFXInvertType.CounterClockwise; //Same as invert = "fasle"
+	        final TalonFXInvertType rightInvert = TalonFXInvertType.Clockwise; //Same as invert = "true"
 
             this.leftConfig = new TalonFXConfiguration();
             this.rightConfig = new TalonFXConfiguration();
 
-            /*this.frontLeftController.setInverted(leftInvert);
+            this.frontLeftController.setInverted(leftInvert);
             this.backLeftController.setInverted(leftInvert);
             this.frontRightController.setInverted(rightInvert);
             this.backRightController.setInverted(rightInvert);
-            */
+            
 
             /* local feedbak source */
             leftConfig.primaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice();
@@ -75,52 +77,56 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
             rightConfig.remoteFilter1.remoteSensorDeviceID = this.frontLeftController.getDeviceID();
             rightConfig.remoteFilter1.remoteSensorSource =  RemoteSensorSource.TalonFX_SelectedSensor;
 
-            setRobotTurnConfigs(rightConfig);
+            setRobotTurnConfigs(rightInvert, rightConfig);
 
             leftConfig.peakOutputForward = +1.0;
             leftConfig.peakOutputReverse = -1.0;
             rightConfig.peakOutputForward = 1.0;
             rightConfig.peakOutputReverse = -1.0;
 
-            //rightConfig.slot0.kF = DriveConstants.DISTANCE_F;
-		    rightConfig.slot0.kP = DriveConstants.DISTANCE_P;
-		    rightConfig.slot0.kI = DriveConstants.DISTANCE_I;
-		    rightConfig.slot0.kD = DriveConstants.DISTANCE_D;
-		    rightConfig.slot0.integralZone = DriveConstants.DISTANCE_Iz;
+            // rightConfig.slot0.kF = DriveConstants.DISTANCE_F;
+            rightConfig.slot0.kP = DriveConstants.DISTANCE_P;
+            rightConfig.slot0.kI = DriveConstants.DISTANCE_I;
+            rightConfig.slot0.kD = DriveConstants.DISTANCE_D;
+            rightConfig.slot0.integralZone = DriveConstants.DISTANCE_Iz;
             rightConfig.slot0.closedLoopPeakOutput = DriveConstants.DISTANCE_PEAK_OUTPUT;
-            
+
             /* FPID Gains for turn servo */
-		    //rightConfig.slot1.kF = DriveConstants.DRIVE_STRAIGHT_F;
-		    rightConfig.slot1.kP = DriveConstants.DRIVE_STRAIGHT_P;
-		    rightConfig.slot1.kI = DriveConstants.DRIVE_STRAIGHT_I;
-		    rightConfig.slot1.kD = DriveConstants.DRIVE_STRAIGHT_D;
-		    rightConfig.slot1.integralZone = DriveConstants.DRIVE_STRAIGHT_IZ;
+            // rightConfig.slot1.kF = DriveConstants.DRIVE_STRAIGHT_F;
+            rightConfig.slot1.kP = DriveConstants.DRIVE_STRAIGHT_P;
+            rightConfig.slot1.kI = DriveConstants.DRIVE_STRAIGHT_I;
+            rightConfig.slot1.kD = DriveConstants.DRIVE_STRAIGHT_D;
+            rightConfig.slot1.integralZone = DriveConstants.DRIVE_STRAIGHT_IZ;
             rightConfig.slot1.closedLoopPeakOutput = DriveConstants.DRIVE_STRAIGHT_PEAK_OUTPUT;
-        
 
             final int closedLoopTimeMs = 1;
-		    rightConfig.slot0.closedLoopPeriod = closedLoopTimeMs;
+            rightConfig.slot0.closedLoopPeriod = closedLoopTimeMs;
             rightConfig.slot1.closedLoopPeriod = closedLoopTimeMs;
-
 
             this.frontLeftController.configAllSettings(leftConfig);
             this.backLeftController.configAllSettings(leftConfig);
             this.frontRightController.configAllSettings(rightConfig);
             this.backRightController.configAllSettings(rightConfig);
 
-            //zeroSensors();
+            this.frontRightController.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20,
+                    DriveConstants.kTimeoutMs);
+            this.frontRightController.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20,
+                    DriveConstants.kTimeoutMs);
+            this.frontRightController.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20,
+                    DriveConstants.kTimeoutMs);
+            this.frontLeftController.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, DriveConstants.kTimeoutMs);
 
+            // 44 to 30, 2.92 spread
 
+            // zeroSensors();
 
             /*
-            this.frontLeftController.configFactoryDefault();
-            this.frontRightController.configFactoryDefault();
-            this.backLeftController.configFactoryDefault();
-            this.backRightController.configFactoryDefault();
-            */
+             * this.frontLeftController.configFactoryDefault();
+             * this.frontRightController.configFactoryDefault();
+             * this.backLeftController.configFactoryDefault();
+             * this.backRightController.configFactoryDefault();
+             */
 
-
-            
         }
 
         /**
@@ -226,69 +232,124 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
         ahrs.zeroYaw();
     }
 
-    public double inchesToTalonUnits(final double inches){
+    public double inchesToTalonUnits(final double inches) {
         return (inches / (Math.PI * DriveConstants.WHEEL_DIAMETER)) * 2048.0;
     }
 
-    public void setDriveToTargetValues(){
+    public void setDriveToTargetValues() {
         this.lockedDistance = motorControllers.frontRightController.getSelectedSensorPosition(0);
         this.targetAngle = motorControllers.frontRightController.getSelectedSensorPosition(1);
-    
-        this.motorControllers.frontRightController.selectProfileSlot(DriveConstants.kSlot_Distanc, DriveConstants.PID_PRIMARY);
-        this.motorControllers.frontRightController.selectProfileSlot(DriveConstants.kSlot_Turning, DriveConstants.PID_DRIVE_STRAIGHT);
+
+        this.motorControllers.frontRightController.selectProfileSlot(DriveConstants.kSlot_Distanc,
+                DriveConstants.PID_PRIMARY);
+        this.motorControllers.frontRightController.selectProfileSlot(DriveConstants.kSlot_Turning,
+                DriveConstants.PID_DRIVE_STRAIGHT);
 
     }
 
     public boolean driveToTarget(double distance) {
-        this.motorControllers.backLeftController.follow(this.motorControllers.frontLeftController);
-        this.motorControllers.backRightController.follow(this.motorControllers.frontRightController);
 
         final double targetPositionRotations = inchesToTalonUnits(distance);
 
-        //this.motorControllers.frontLeftController.set(ControlMode.Position, targetPositionRotations);
-        //this.motorControllers.frontRightController.set(ControlMode.Position, targetPositionRotations);
+        // this.motorControllers.frontLeftController.set(ControlMode.Position,
+        // targetPositionRotations);
+        // this.motorControllers.frontRightController.set(ControlMode.Position,
+        // targetPositionRotations);
 
         final double target_sensorUnits = targetPositionRotations + lockedDistance;
         final double target_turn = targetAngle;
 
-        this.motorControllers.frontRightController.set(TalonFXControlMode.Position, target_sensorUnits, DemandType.AuxPID, target_turn);
-        this.motorControllers.frontRightController.follow(motorControllers.frontRightController, FollowerType.AuxOutput1);
+        this.motorControllers.frontRightController.set(TalonFXControlMode.Position, target_sensorUnits,
+                DemandType.AuxPID, target_turn);
+        this.motorControllers.frontLeftController.follow(this.motorControllers.frontRightController,
+                FollowerType.AuxOutput1);
+        // this.motorControllers.frontLeftController.set(TalonFXControlMode.Position,
+        // target_sensorUnits, DemandType.AuxPID, target_turn);
 
-        return (this.motorControllers.frontRightController.getSelectedSensorPosition(0) == target_sensorUnits);
+        this.motorControllers.backLeftController.follow(this.motorControllers.frontLeftController);
+        this.motorControllers.backRightController.follow(this.motorControllers.frontRightController);
+
+        // this.motorControllers.frontLeftController.follow(motorControllers.frontRightController,
+        // FollowerType.AuxOutput1);
+
+        System.out.println(this.motorControllers.frontRightController.getSelectedSensorPosition(0));
+        return ((this.motorControllers.frontRightController.getSelectedSensorPosition(0) >= target_sensorUnits - 100)
+                && this.motorControllers.frontRightController.getSelectedSensorPosition(0) <= target_sensorUnits + 100);
+
     }
 
     public void zeroSensors() {
-		motorControllers.frontLeftController.getSensorCollection().setIntegratedSensorPosition(0, DriveConstants.TIMEOUT_MS);
-		motorControllers.frontRightController.getSensorCollection().setIntegratedSensorPosition(0, DriveConstants.TIMEOUT_MS);
-		System.out.println("[Integrated Sensors] All sensors are zeroed.\n");
+        motorControllers.frontLeftController.getSensorCollection().setIntegratedSensorPosition(0,
+                DriveConstants.TIMEOUT_MS);
+        motorControllers.frontRightController.getSensorCollection().setIntegratedSensorPosition(0,
+                DriveConstants.TIMEOUT_MS);
+        System.out.println("[Integrated Sensors] All sensors are zeroed.\n");
     }
 
-    public static void setRobotTurnConfigs( final TalonFXConfiguration masterConfig){
+    public static void setRobotTurnConfigs(TalonFXInvertType masterInvertType, TalonFXConfiguration masterConfig) {
 
-		//if (masterInvertType == TalonFXInvertType.Clockwise){
+		/* Check if we're inverted */
+		if (masterInvertType == TalonFXInvertType.Clockwise){
+			/* 
+				If master is inverted, that means the integrated sensor
+				will be negative in the forward direction.
+				If master is inverted, the final sum/diff result will also be inverted.
+				This is how Talon FX corrects the sensor phase when inverting 
+				the motor direction.  This inversion applies to the *Selected Sensor*,
+				not the native value.
+				Will a sensor sum or difference give us a positive heading?
+				Remember the Master is one side of your drivetrain distance and 
+				Auxiliary is the other side's distance.
+					Phase | Term 0   |   Term 1  | Result
+				Sum:  -1 *((-)Master + (+)Aux   )| OK - magnitude will cancel each other out
+				Diff: -1 *((-)Master - (+)Aux   )| NOT OK - magnitude increases with forward distance.
+				Diff: -1 *((+)Aux    - (-)Master)| NOT OK - magnitude decreases with forward distance
+			*/
 
-			/*masterConfig.sum0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Integrated Sensor
+			masterConfig.sum0Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local Integrated Sensor
 			masterConfig.sum1Term = TalonFXFeedbackDevice.RemoteSensor1.toFeedbackDevice();   //Aux Selected Sensor
 			masterConfig.auxiliaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorSum.toFeedbackDevice(); //Sum0 + Sum1
 
-            masterConfig.auxPIDPolarity = true;
-            */
-		//} else {
+			/*
+				PID Polarity
+				With the sensor phasing taken care of, we now need to determine if the PID polarity is in the correct direction
+				This is important because if the PID polarity is incorrect, we will run away while trying to correct
+				Will inverting the polarity give us a positive counterclockwise heading?
+				If we're moving counterclockwise(+), and the master is on the right side and inverted,
+				it will have a negative velocity and the auxiliary will have a negative velocity
+				 heading = right + left
+				 heading = (-) + (-)
+				 heading = (-)
+				Let's assume a setpoint of 0 heading.
+				This produces a positive error, in order to cancel the error, the right master needs to
+				drive backwards. This means the PID polarity needs to be inverted to handle this
+				
+				Conversely, if we're moving counterclwise(+), and the master is on the left side and inverted,
+				it will have a positive velocity and the auxiliary will have a positive velocity.
+				 heading = right + left
+				 heading = (+) + (+)
+				 heading = (+)
+				Let's assume a setpoint of 0 heading.
+				This produces a negative error, in order to cancel the error, the left master needs to
+				drive forwards. This means the PID polarity needs to be inverted to handle this
+			*/
+			masterConfig.auxPIDPolarity = true;
+		} else {
 			/* Master is not inverted, both sides are positive so we can diff them. */
 			masterConfig.diff0Term = TalonFXFeedbackDevice.RemoteSensor1.toFeedbackDevice();    //Aux Selected Sensor
 			masterConfig.diff1Term = TalonFXFeedbackDevice.IntegratedSensor.toFeedbackDevice(); //Local IntegratedSensor
 			masterConfig.auxiliaryPID.selectedFeedbackSensor = TalonFXFeedbackDevice.SensorDifference.toFeedbackDevice(); //Sum0 + Sum1
 			/* With current diff terms, a counterclockwise rotation results in negative heading with a right master */
 			masterConfig.auxPIDPolarity = true;
-		//}
-		masterConfig.auxiliaryPID.selectedFeedbackCoefficient = 3600 / 51711; //turn travel unts per rotation / enocder units per rotation
+		}
+		/**
+		 * Heading units should be scaled to ~4000 per 360 deg, due to the following limitations...
+		 * - Target param for aux PID1 is 18bits with a range of [-131072,+131072] units.
+		 * - Target for aux PID1 in motion profile is 14bits with a range of [-8192,+8192] units.
+		 *  ... so at 3600 units per 360', that ensures 0.1 degree precision in firmware closed-loop
+		 *  and motion profile trajectory points can range +-2 rotations.
+		 */
+		masterConfig.auxiliaryPID.selectedFeedbackCoefficient = DriveConstants.kTurnTravelUnitsPerRotation / DriveConstants.kEncoderUnitsPerRotation;
 	}
-    
-   /* this.lockedDistance = motorControllers.frontRightController.getSelectedSensorPosition(0);
-    this.frontRightController.selectProfileSlot(Constants.kSlot_Distanc, Constants.PID_PRIMARY);
-
-    double target_sensorUnits = forward * Constants.kSensorUnitsPerRotation * Constants.kRotationsToTravel  + _lockedDistance;
-    _rightMaster.set(TalonFXControlMode.Position, target_sensorUnits, DemandType.AuxPID, target_turn);
-    _leftMaster.follow(_rightMaster, FollowerType.AuxOutput1);
-    */
+   
 }

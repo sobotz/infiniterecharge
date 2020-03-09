@@ -39,6 +39,7 @@ public class DriveToTargetInches extends CommandBase {
   public void execute() {
     isFinished = m_drive.driveToTarget(target);
     System.out.println(isFinished);
+    
   }
 
   // Called once the command ends or is interrupted.
@@ -49,6 +50,7 @@ public class DriveToTargetInches extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    //return isFinished;
     return isFinished;
   }
 }

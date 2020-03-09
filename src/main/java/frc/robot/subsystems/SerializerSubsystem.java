@@ -101,7 +101,7 @@ public class SerializerSubsystem extends SubsystemBase {
       ballCount = SmartDashboard.getNumber("Ball Count: ", ballCount);
     }
 */
-    if (serializerSensor1.getVoltage() < .85 && acceptingBalls ) {
+    if (serializerSensor1.getVoltage() < .85 ){//&& acceptingBalls ) {
       serializerMotor1.set(ControlMode.PercentOutput, -SerializerConstants.SERIALIZER_SPEED);
       //SmartDashboard.putBoolean("Belts On: ", true);
     } else {

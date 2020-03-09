@@ -163,7 +163,7 @@ public class RobotContainer {
         JoystickButton deliverIntakeButton = new JoystickButton(this.m_operatorJoystick, 1);
         JoystickButton forwardIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
         JoystickButton reverseIntakeButton = new JoystickButton(this.m_buttonBox, 1);
-        JoystickButton launchBallsButton = new JoystickButton(this.m_operatorJoystick, 6);
+        JoystickButton launchBallsButton = new JoystickButton(this.m_buttonBox, 6);
         JoystickButton serializerForwardButton = new JoystickButton(this.m_buttonBox, 2);
         JoystickButton serializerReverseButton = new JoystickButton(this.m_buttonBox,3);
         JoystickButton enoderButton = new JoystickButton(m_leftDriverJoystick, 12);
