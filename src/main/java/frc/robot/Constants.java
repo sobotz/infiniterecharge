@@ -69,8 +69,12 @@ public final class Constants {
 
 		public static final double DISTANCE_PER_PULSE = (1/2048)*(6*Math.PI);
 		public static final double WHEEL_DIAMETER = 6;
+
 		public static final int kTimeoutMs = 30;
 		public static final int kTurnTravelUnitsPerRotation = 3600;
+
+		public final static int kSensorUnitsPerRotation = 2048;
+
 
 		/**
 	 * Empirically measure what the difference between encoders per 360'
