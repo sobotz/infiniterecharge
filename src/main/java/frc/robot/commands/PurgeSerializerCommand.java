@@ -39,7 +39,7 @@ public class PurgeSerializerCommand extends CommandBase {
       this.intake.retractIntake();
       intakeUp = true;
     }
-    this.serializer.runSerializer(-1);
+    this.serializer.runSerializer(1);
   }
 
   // Called once the command ends or is interrupted.

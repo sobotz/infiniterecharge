@@ -31,7 +31,7 @@ public class MoveSerializerBackCommand extends CommandBase {
   @Override
   public void execute() {
     this.serializer.serializerState = 2;
-    this.serializer.runSerializer(1);
+    this.serializer.runSerializer(-1);
   }
 
   // Called once the command ends or is interrupted.

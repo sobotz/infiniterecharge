@@ -43,12 +43,12 @@ public class LaunchAllCommand extends CommandBase {
     }
     this.launcher.startLauncher();
     // checks if launcher Motor is up to speed
-    if (this.launcher.launcherMotor.getActiveTrajectoryVelocity() > 7
-        && this.launcher.launcherMotor2.getActiveTrajectoryVelocity() > 7) {
-      // starts rollers and serializer
-      this.serializer.runSerializer(-1);
-      this.launcher.startRollers();
-    }
+    // if (this.launcher.launcherMotor.getActiveTrajectoryVelocity() > 7
+    // && this.launcher.launcherMotor2.getActiveTrajectoryVelocity() > 7) {
+    // starts rollers and serializer
+    this.serializer.runSerializer(1);
+    this.launcher.startRollers();
+    // }
 
     // this.nFramesRun++;
   }
