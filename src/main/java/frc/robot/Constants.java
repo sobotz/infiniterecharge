@@ -82,7 +82,7 @@ public final class Constants {
 	 * Drive the robot in counter clockwise rotations and measure the units per rotation.
 	 * Take the average of the two.
 	 */
-		public static final int kEncoderUnitsPerRotation = 0;
+		public static final int kEncoderUnitsPerRotation = 51711;
 		
 		//(64910.5/100)/2048;
 	}

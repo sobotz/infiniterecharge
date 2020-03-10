@@ -79,10 +79,10 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
 
             setRobotTurnConfigs(rightInvert, rightConfig);
 
-            leftConfig.peakOutputForward = +1.0;
-            leftConfig.peakOutputReverse = -1.0;
-            rightConfig.peakOutputForward = 1.0;
-            rightConfig.peakOutputReverse = -1.0;
+            leftConfig.peakOutputForward = +0.5;
+            leftConfig.peakOutputReverse = -0.5;
+            rightConfig.peakOutputForward = 0.5;
+            rightConfig.peakOutputReverse = -0.5;
 
             // rightConfig.slot0.kF = DriveConstants.DISTANCE_F;
             rightConfig.slot0.kP = DriveConstants.DISTANCE_P;
@@ -108,15 +108,15 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
             this.frontRightController.configAllSettings(rightConfig);
             this.backRightController.configAllSettings(rightConfig);
 
-            this.frontRightController.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20,
+            /*this.frontRightController.setStatusFramePeriod(StatusFrame.Status_12_Feedback1, 20,
                     DriveConstants.kTimeoutMs);
             this.frontRightController.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 20,
                     DriveConstants.kTimeoutMs);
             this.frontRightController.setStatusFramePeriod(StatusFrame.Status_14_Turn_PIDF1, 20,
                     DriveConstants.kTimeoutMs);
             this.frontLeftController.setStatusFramePeriod(StatusFrame.Status_2_Feedback0, 5, DriveConstants.kTimeoutMs);
-
-            // 44 to 30, 2.92 spread
+                    */
+            // gearbox is 44 to 30, 2.92 spread
 
             // zeroSensors();
 
