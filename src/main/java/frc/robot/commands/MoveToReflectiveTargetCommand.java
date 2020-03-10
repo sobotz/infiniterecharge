@@ -176,7 +176,7 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
         /**
          * Checks whether or not the target has been acquired.
          **/
-        public boolean hasFinished(double errorTolerance) {
+        public boolean hasFinished(double errorTolerance, boolean[] enabledAxes) {
             // Check if we need to correct for the x values
             boolean needsCorrectionX = needsCorrectionOnAxis(Axis.X, errorTolerance);
             boolean needsCorrectionZ = needsCorrectionOnAxis(Axis.Z, errorTolerance);
@@ -195,7 +195,8 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
             this.hasInitialHeading = (!needsCorrectionX && this.nRotationlessFrames > this.maxFrames * 0.75) ? true
                     : this.hasInitialHeading;
 
-            return !needsCorrectionX && !needsCorrectionZ && this.nCorrectionlessFrames > this.maxFrames * 0.75;
+            return (enabledAxes[0] ? !needsCorrectionX : true) && (enabledAxes[2] ? !needsCorrectionZ : true)
+                    && this.nCorrectionlessFrames > this.maxFrames * 0.75;
         }
 
         /**
@@ -212,8 +213,10 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
                 return Math.abs(this.targetOffsets.get(1).getAverage())
                         / Constants.VisionConstants.DEFAULT_BOUNDS[1] > errorTolerance;
             default:
-                return Constants.VisionConstants.DEFAULT_BOUNDS[2]
-                        - this.targetOffsets.get(2).getAverage() > errorTolerance;
+                return Math.abs(
+                        Constants.VisionConstants.DEFAULT_BOUNDS[2] - this.targetOffsets.get(2).getAverage()) > Math
+                                .abs(Constants.VisionConstants.DEFAULT_BOUNDS[2]
+                                        - ((1 + errorTolerance) * Constants.VisionConstants.DEFAULT_BOUNDS[2]));
             }
         }
 
@@ -361,6 +364,9 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
          */
         DoubleSupplier maximumForwardSpeed;
 
+        /* The set of axes that are supported by the vision command. */
+        boolean[] supportedAxes;
+
         /**
          * Initializes a new Configuration for the MoveToReflectiveTarget command with
          * the given parameters.
@@ -384,6 +390,7 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
             this.errorTolerance = errorTolerance;
             this.maximumSpeed = maximumSpeed;
             this.maximumForwardSpeed = maximumForwardSpeed;
+            this.supportedAxes = new boolean[] { true, true, true };
         }
 
         /**
@@ -413,13 +420,16 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
             // we will extract the information for the configuration of the command
             VisionSubsystem preferencesBuilder = VisionSubsystem.getDefault();
 
-            // Get a default instane of the command config so that we can fallback to some values
+            // Get a default instane of the command config so that we can fallback to some
+            // values
             Configuration defaultConfig = Configuration.getDefault();
 
             // Use all default values for each of the configuration fields. Or, if we can
             // get override values from the preferences instance, use those.
-            this.kP = () -> prefs.getDouble(preferencesBuilder.preferencesKey("kP").toString(), defaultConfig.kP.getAsDouble());
-            this.kI = () -> prefs.getDouble(preferencesBuilder.preferencesKey("kI").toString(), defaultConfig.kI.getAsDouble());
+            this.kP = () -> prefs.getDouble(preferencesBuilder.preferencesKey("kP").toString(),
+                    defaultConfig.kP.getAsDouble());
+            this.kI = () -> prefs.getDouble(preferencesBuilder.preferencesKey("kI").toString(),
+                    defaultConfig.kI.getAsDouble());
             this.kChange = () -> prefs.getDouble(preferencesBuilder.preferencesKey("kChange").toString(),
                     defaultConfig.kChange.getAsDouble());
             this.errorTolerance = () -> prefs.getDouble(preferencesBuilder.preferencesKey("errorTolerance").toString(),
@@ -429,6 +439,36 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
             this.maximumForwardSpeed = () -> prefs.getDouble(
                     preferencesBuilder.preferencesKey("maximumForwardSpeed").toString(),
                     defaultConfig.maximumForwardSpeed.getAsDouble());
+
+            return this;
+        }
+
+        /**
+         * Disables correction on a particular axis. The available axes are: x, y, z. X
+         * represents the rotational offset about the robot, Y represents secondary
+         * horizontal offset (measured in terms of vertical offset along the height of
+         * the screen), and Z represents horizontal offset (how far forward or
+         * backwards?) in terms of % area. Of the two methods of horizontal correction,
+         * Z correction is given precedence.
+         *
+         * @param axis the axis that should be disabled for correction capability
+         * @return a copy of the configuration
+         */
+        public Configuration disableCorrectionOnAxis(int axis) {
+            this.supportedAxes[axis] = false;
+
+            return this;
+        }
+
+        /**
+         * Enables correction on a particular axis. By default, all (X, Y, Z) axes are
+         * enabled.
+         *
+         * @param axis the axis that should be enabled
+         * @return a copy of the configuration
+         */
+        public Configuration enableCorrectionOnAxis(int axis) {
+            this.supportedAxes[axis] = true;
 
             return this;
         }
@@ -562,6 +602,7 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
             break;
         case Z:
             offset = Constants.VisionConstants.DEFAULT_BOUNDS[2] - offset;
+            original = offset;
 
             break;
         }
@@ -569,7 +610,7 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
         // If the offset is negative, compare it against the negative max number of
         // degrees. Otherwise, compare it against
         // the positive version.
-        return original < 0 ? -Math.pow(offset, this.cfg.getkChange()) : Math.pow(offset, this.cfg.getkChange());
+        return original < 0 ? -1 * Math.pow(Math.abs(offset), this.cfg.getkChange()) : Math.pow(offset, this.cfg.getkChange());
     }
 
     /**
@@ -592,25 +633,28 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
             return;
         }
 
-        double tolerance = this.state.hasInitialHeading ? this.cfg.getErrorTolerance() * 2.5 : this.cfg.getErrorTolerance();
+        double tolerance = this.state.hasInitialHeading ? this.cfg.getErrorTolerance() * 2.5
+                : this.cfg.getErrorTolerance();
 
-        // Check that we need to correct for Y axis error
-        if (this.state.needsCorrectionOnAxis(Axis.Z, this.cfg.getErrorTolerance())
-                && this.state.hasInitialHeading) {
+        // Check that we need to correct for Z axis error
+        if (this.state.needsCorrectionOnAxis(Axis.Z, this.cfg.getErrorTolerance()) && this.state.hasInitialHeading
+                && this.cfg.supportedAxes[2]) {
             // Calculate the gain with the z offset
             double gain = this.cfg.getKp() * offsets[2] * this.cfg.getMaximumForwardSpeed() + this.cfg.getKi();
+
             // gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
 
             // Move forward and back using the gain variable
             this.m_drivetrain.drive(Type.RHINO, new double[] { -gain, -gain });
-        } else if (this.state.needsCorrectionOnAxis(Axis.X, tolerance)) {
+        } else if (this.state.needsCorrectionOnAxis(Axis.X, tolerance) && this.cfg.supportedAxes[0]) {
             // Calculate the gain with the x offset
             double gain = this.cfg.getKp() * offsets[0] * this.cfg.getMaximumSpeed();
             gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
 
             // Spin in one spot using the provided gain variable
             this.m_drivetrain.drive(Type.RHINO, new double[] { -gain, gain });
-        } else if (this.state.needsCorrectionOnAxis(Axis.Y, this.cfg.getErrorTolerance()) && this.state.hasInitialHeading) {
+        } else if (this.state.needsCorrectionOnAxis(Axis.Y, this.cfg.getErrorTolerance())
+                && this.state.hasInitialHeading && this.cfg.supportedAxes[2]) {
             // Calculate the gain with the y offset
             double gain = this.cfg.getKp() * offsets[1] * this.cfg.getMaximumForwardSpeed() + this.cfg.getKi();
             gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
@@ -628,7 +672,7 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         // Check that the command should have finished, and that we have a target
-        boolean hasFinished = this.state.hasFinished(this.cfg.getErrorTolerance());
+        boolean hasFinished = this.state.hasFinished(this.cfg.getErrorTolerance(), this.cfg.supportedAxes);
         boolean hasTarget = this.state.hasTarget();
 
         // If there aren't any targets, we're done. Or, if we've moved to the target,

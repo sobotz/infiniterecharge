@@ -85,12 +85,6 @@ public class RobotContainer {
 
     private final DriveToTargetInches encoderCommand;
 
-    private final RunSerializerCommand serializerForward;
-
-    private final RunSerializerCommand serializerReverse;
-
-    
-
     /* END COMMANDS */
 
     public RobotContainer() {
@@ -101,12 +95,12 @@ public class RobotContainer {
 
         // Make a motor controller config for the drivetrain
         MotorControllerConfiguration motorCfg = new MotorControllerConfiguration(
-                Constants.DriveConstants.LEFT_FRONT_MOTOR, Constants.DriveConstants.RIGHT_FRONT_MOTOR,
-                Constants.DriveConstants.LEFT_BACK_MOTOR, Constants.DriveConstants.RIGHT_BACK_MOTOR);
+            Constants.DriveConstants.LEFT_FRONT_MOTOR, Constants.DriveConstants.RIGHT_FRONT_MOTOR,
+            Constants.DriveConstants.LEFT_BACK_MOTOR, Constants.DriveConstants.RIGHT_BACK_MOTOR);
 
         // Keep the light on the limelight on at all times
         LimelightConfiguration visionCfg = new LimelightConfiguration(VisionSubsystem.LEDMode.ON)
-                .applyPreferences(this.m_preferences);
+        .applyPreferences(this.m_preferences);
 
         // Initialize each of the subsystems
         this.m_drivetrain = new DriveSubsystem(motorCfg);
@@ -123,9 +117,7 @@ public class RobotContainer {
         // Set up an alternative teleop command that uses arcade drive; use just one
         // joystick
         this.fallbackTeleopCommand = new DifferentialDriveCommand(this.m_drivetrain,
-                () -> m_leftDriverJoystick.getRawAxis(0), () -> -m_leftDriverJoystick.getRawAxis(1),
-                () -> m_leftDriverJoystick.getRawAxis(2)).applyPreferences(this.m_preferences);
-
+                () -> this.m_leftDriverJoystick.getRawAxis(0), () -> -this.m_leftDriverJoystick.getRawAxis(1)).applyPreferences(this.m_preferences);
 
         // SmartDashboard in order to override default values
         this.visionCommand = new MoveToReflectiveTargetCommand(this.m_drivetrain, this.m_vision,
@@ -134,18 +126,12 @@ public class RobotContainer {
         // Setup a command to control the intake subsystem from, using the left driver
         // joystick
         this.deliverIntakeCommand = new DeliverIntakeCommand(this.m_intake);
-        
+
         /* Set up two commands that control the diretion of the intake. */
         this.intakeForwardCommand = new IntakeDirectionControl(this.m_intake, false);
         this.intakeReverseCommand = new IntakeDirectionControl(this.m_intake, true);
-        
-        /* Set up a command that launches balls from the serializer */
+
         this.launchCommand = new LaunchAllCommand(this.m_serializer, this.m_launcher);
-
-        this.serializerForward = new RunSerializerCommand(m_serializer, true);
-
-        this.serializerReverse = new RunSerializerCommand(m_serializer, false);
-
 
         this.encoderCommand = new DriveToTargetInches(m_drivetrain,  100);
         //this.m_testLaunchCommand = new TestLaunchCommand(this.m_serializer, this.m_launcher);
@@ -185,10 +171,6 @@ public class RobotContainer {
 
         /*When the right bumper is held, run the serializer, feed, and launcher to shoot balls */
         launchBallsButton.whenHeld(this.launchCommand);
-
-        serializerForwardButton.whenHeld(serializerForward);
-
-        serializerReverseButton.whenHeld(serializerReverse);
 
         enoderButton.whenPressed(this.encoderCommand);
 

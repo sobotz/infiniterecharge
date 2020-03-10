@@ -35,9 +35,9 @@ public class RunSerializerCommand extends CommandBase {
   @Override
   public void execute() {
     if(this.direction){
-      this.m_serializer.runSerializer(-1);
+      this.m_serializer.runSerializer(false);
     }else{
-      this.m_serializer.runSerializer(1);
+      this.m_serializer.runSerializer(true);
     }
   }
 

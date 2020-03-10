@@ -14,5 +14,6 @@ spotless {
 
         removeUnusedImports()
         googleJavaFormat()
+	indentWithSpaces(4)
     }
 }

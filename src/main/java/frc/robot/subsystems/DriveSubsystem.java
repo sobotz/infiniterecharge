@@ -120,13 +120,11 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
 
             // zeroSensors();
 
-            /*
-             * this.frontLeftController.configFactoryDefault();
-             * this.frontRightController.configFactoryDefault();
-             * this.backLeftController.configFactoryDefault();
-             * this.backRightController.configFactoryDefault();
-             */
-
+            // Reset the configuration of each of the talons
+            this.frontLeftController.configFactoryDefault();
+            this.frontRightController.configFactoryDefault();
+            this.backLeftController.configFactoryDefault();
+            this.backRightController.configFactoryDefault();
         }
 
         /**
