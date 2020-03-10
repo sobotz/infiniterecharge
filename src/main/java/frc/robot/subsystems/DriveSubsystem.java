@@ -70,7 +70,7 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
                 this.backLeftController.follow(this.frontLeftController);
 
                 this.frontRightController.set(ControlMode.PercentOutput, leftPercentageSpeed,
-                        DemandType.ArbitraryFeedForward, rightPercentageSpeed);
+                        DemandType.ArbitraryFeedForward, -rightPercentageSpeed);
                 this.backRightController.follow(this.frontRightController);
 
                 return;
