@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
@@ -66,8 +67,14 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
 
             this.frontLeftController.setInverted(leftInvert);
             this.backLeftController.setInverted(leftInvert);
+
             this.frontRightController.setInverted(rightInvert);
             this.backRightController.setInverted(rightInvert);
+
+            this.frontLeftController.setNeutralMode(NeutralMode.Brake);
+            this.backLeftController.setNeutralMode(NeutralMode.Brake);
+            this.frontRightController.setNeutralMode(NeutralMode.Brake);
+            this.backRightController.setNeutralMode(NeutralMode.Brake);
             
 
             /* local feedbak source */
@@ -141,7 +148,7 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
                         DemandType.ArbitraryFeedForward, rightPercentageSpeed);
                 this.backLeftController.follow(this.frontLeftController);
 
-                this.frontRightController.set(ControlMode.PercentOutput, leftPercentageSpeed,
+                this.frontRightController.set(ControlMode.PercentOutput, -leftPercentageSpeed,
                         DemandType.ArbitraryFeedForward, rightPercentageSpeed);
                 this.backRightController.follow(this.frontRightController);
 
@@ -254,15 +261,18 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
         // this.motorControllers.frontRightController.set(ControlMode.Position,
         // targetPositionRotations);
 
-        final double target_sensorUnits = targetPositionRotations + lockedDistance;
+        final double target_sensorUnits = DriveConstants.kSensorUnitsPerRotation * DriveConstants.kRotationsToTravel + lockedDistance;
         final double target_turn = targetAngle;
 
-        this.motorControllers.frontRightController.set(TalonFXControlMode.Position, target_sensorUnits,
-                DemandType.AuxPID, target_turn);
-        this.motorControllers.frontLeftController.follow(this.motorControllers.frontRightController,
-                FollowerType.AuxOutput1);
+        //this.motorControllers.frontRightController.set(TalonFXControlMode.Position, target_sensorUnits,
+        //        DemandType.AuxPID, target_turn);
+        //this.motorControllers.frontLeftController.follow(this.motorControllers.frontRightController,
+        //       FollowerType.AuxOutput1);
         // this.motorControllers.frontLeftController.set(TalonFXControlMode.Position,
         // target_sensorUnits, DemandType.AuxPID, target_turn);
+
+        this.motorControllers.frontRightController.set(TalonFXControlMode.PercentOutput, 0.2);
+        this.motorControllers.frontLeftController.follow(this.motorControllers.frontRightController);
 
         this.motorControllers.backLeftController.follow(this.motorControllers.frontLeftController);
         this.motorControllers.backRightController.follow(this.motorControllers.frontRightController);
@@ -270,10 +280,10 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
         // this.motorControllers.frontLeftController.follow(motorControllers.frontRightController,
         // FollowerType.AuxOutput1);
 
+        System.out.println(target_sensorUnits);
         System.out.println(this.motorControllers.frontRightController.getSelectedSensorPosition(0));
-        return ((this.motorControllers.frontRightController.getSelectedSensorPosition(0) >= target_sensorUnits - 100)
-                && this.motorControllers.frontRightController.getSelectedSensorPosition(0) <= target_sensorUnits + 100);
 
+        return target_sensorUnits - this.motorControllers.frontRightController.getSelectedSensorPosition(0) <= 100;
     }
 
     public void zeroSensors() {
