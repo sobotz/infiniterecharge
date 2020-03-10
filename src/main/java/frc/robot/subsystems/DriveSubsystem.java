@@ -45,8 +45,8 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
             this.backLeftController = new WPI_TalonFX(backLeftControllerPort);
             this.backRightController = new WPI_TalonFX(backRightControllerPort);
 
-            this.frontRightController.setInverted(true);
-            this.backRightController.setInverted(true);
+            this.frontLeftController.setInverted(true);
+            this.backLeftControllerPort.setInverted(true);
 
             // Reset the configuration of each of the talons
             this.frontLeftController.configFactoryDefault();
