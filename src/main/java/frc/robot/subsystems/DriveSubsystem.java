@@ -45,8 +45,13 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
             this.backLeftController = new WPI_TalonFX(backLeftControllerPort);
             this.backRightController = new WPI_TalonFX(backRightControllerPort);
 
-            this.frontLeftController.setInverted(true);
-            this.backLeftController.setInverted(true);
+            // In order to maintain compatibility with navx-utilizing code, we must stipulate
+            // how the wheels will interact with each other
+            this.frontLeftController.setInverted(TalonFXInvertType.CounterClockwise);
+            this.backLeftController.setInverted(TalonFXInvertType.CounterClockwise);
+
+            this.frontRightController.setInverted(TalonFXInvertType.Clockwise);
+            this.backRightController.setInverted(TalonFXInvertType.Clockwise);
 
             // Reset the configuration of each of the talons
             this.frontLeftController.configFactoryDefault();
@@ -69,8 +74,8 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
                         DemandType.ArbitraryFeedForward, rightPercentageSpeed);
                 this.backLeftController.follow(this.frontLeftController);
 
-                this.frontRightController.set(ControlMode.PercentOutput, leftPercentageSpeed,
-                        DemandType.ArbitraryFeedForward, -rightPercentageSpeed);
+                this.frontRightController.set(ControlMode.PercentOutput, -leftPercentageSpeed,
+                        DemandType.ArbitraryFeedForward, rightPercentageSpeed);
                 this.backRightController.follow(this.frontRightController);
 
                 return;
