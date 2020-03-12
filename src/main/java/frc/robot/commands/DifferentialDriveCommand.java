@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DriveSubsystem.Type;
-import frc.robot.RobotContainer;
 import frc.robot.common.Patterns;
 
 /**
@@ -67,7 +66,8 @@ public class DifferentialDriveCommand extends CommandBase
         // from there
         this.maximumSpeed = () -> prefs.getDouble(this.m_drivetrain.preferencesKey("maximumSpeed").toString(), 1.0);
 
-        this.amplificationFactor = () -> prefs.getDouble(this.m_drivetrain.preferencesKey("inputAmplificationFactor").toString(), 1.0);
+        this.amplificationFactor = () -> prefs
+                .getDouble(this.m_drivetrain.preferencesKey("inputAmplificationFactor").toString(), 1.0);
 
         this.finalX = () -> this.maximumSpeed.getAsDouble() * this.xInput.getAsDouble();
         this.finalY = () -> this.maximumSpeed.getAsDouble() * this.yInput.getAsDouble();
@@ -86,13 +86,14 @@ public class DifferentialDriveCommand extends CommandBase
         double inputAmplificationFactor = this.amplificationFactor.getAsDouble();
 
         // Get the readings from the joystick input
-        double[] inputs = {this.finalX.getAsDouble(), this.finalY.getAsDouble()};
+        double[] inputs = { this.finalX.getAsDouble(), this.finalY.getAsDouble() };
 
-        // Normalize each of the inputs, with consideration to the provided amplifciation factor
+        // Normalize each of the inputs, with consideration to the provided
+        // amplifciation factor
         for (int i = 0; i < inputs.length; i++) {
             // Normalize the input
             double normalized = Math.pow(inputs[i], inputAmplificationFactor);
-            
+
             // Reapply a negative sign, if it exists in the original input
             if (inputs[i] < 0 && normalized >= 0) {
                 normalized *= -1;

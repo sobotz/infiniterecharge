@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.DeliverIntakeCommand;
 import frc.robot.commands.DifferentialDriveCommand;
-import frc.robot.commands.DriveCommand;
 import frc.robot.commands.IntakeDirectionControl;
 import frc.robot.commands.LaunchAllCommand;
 import frc.robot.commands.MoveToReflectiveTargetCommand;
@@ -48,7 +47,7 @@ public class RobotContainer {
     private final Preferences m_preferences;
 
     /* The driver's joystick. */
-    public static Joystick m_leftDriverJoystick;
+    public Joystick m_leftDriverJoystick;
 
     /* The operator's joystick. */
     private Joystick m_operatorJoystick;
@@ -72,7 +71,7 @@ public class RobotContainer {
 
     private IntakeDirectionControl fullForwardCommand;
     private IntakeDirectionControl fullReverseCommand;
-    //private TestLaunchCommand m_testLaunchCommand;
+    // private TestLaunchCommand m_testLaunchCommand;
 
     /* END COMMANDS */
 
@@ -84,12 +83,12 @@ public class RobotContainer {
 
         // Make a motor controller config for the drivetrain
         MotorControllerConfiguration motorCfg = new MotorControllerConfiguration(
-            Constants.DriveConstants.LEFT_FRONT_MOTOR, Constants.DriveConstants.RIGHT_FRONT_MOTOR,
-            Constants.DriveConstants.LEFT_BACK_MOTOR, Constants.DriveConstants.RIGHT_BACK_MOTOR);
+                Constants.DriveConstants.LEFT_FRONT_MOTOR, Constants.DriveConstants.RIGHT_FRONT_MOTOR,
+                Constants.DriveConstants.LEFT_BACK_MOTOR, Constants.DriveConstants.RIGHT_BACK_MOTOR);
 
         // Keep the light on the limelight on at all times
         LimelightConfiguration visionCfg = new LimelightConfiguration(VisionSubsystem.LEDMode.ON)
-        .applyPreferences(this.m_preferences);
+                .applyPreferences(this.m_preferences);
 
         // Initialize each of the subsystems
         this.m_drivetrain = new DriveSubsystem(motorCfg);
@@ -103,7 +102,8 @@ public class RobotContainer {
         // Set up an alternative teleop command that uses arcade drive; use just one
         // joystick
         this.fallbackTeleopCommand = new DifferentialDriveCommand(this.m_drivetrain,
-                () -> this.m_leftDriverJoystick.getRawAxis(0), () -> -this.m_leftDriverJoystick.getRawAxis(1)).applyPreferences(this.m_preferences);
+                () -> this.m_leftDriverJoystick.getRawAxis(0), () -> -this.m_leftDriverJoystick.getRawAxis(1))
+                        .applyPreferences(this.m_preferences);
 
         // SmartDashboard in order to override default values
         this.visionCommand = new MoveToReflectiveTargetCommand(this.m_drivetrain, this.m_vision,
@@ -121,7 +121,8 @@ public class RobotContainer {
 
         this.launchCommand = new LaunchAllCommand(this.m_serializer, this.m_launcher);
 
-        //this.m_testLaunchCommand = new TestLaunchCommand(this.m_serializer, this.m_launcher);
+        // this.m_testLaunchCommand = new TestLaunchCommand(this.m_serializer,
+        // this.m_launcher);
 
         // Configure the button bindings
         this.configureButtonBindings();
@@ -136,12 +137,12 @@ public class RobotContainer {
         // Changed to A
         JoystickButton activateVisionButton = new JoystickButton(this.m_operatorJoystick, 3);
         // Changed to X
-        // JoystickButton activateIntakeButton = new JoystickButton(this.m_operatorJoystick, 6);
+        // JoystickButton activateIntakeButton = new
+        // JoystickButton(this.m_operatorJoystick, 6);
         // Changed to left trigger (raw axis)
         JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
 
         // Change to left bumper
-
 
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
 
@@ -149,19 +150,18 @@ public class RobotContainer {
 
         // When the left bumper button is pressed, reverse the intake)
         reverseIntakeButton.whenPressed(this.fullReverseCommand);
-        // activateIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(true));
+        // activateIntakeButton.whenPressed(() ->
+        // this.intakeControlCommand.setDirection(true));
 
         // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
         activateVisionButton.toggleWhenPressed(this.visionCommand);
 
         // JoystickButton bob = new JoystickButton(m_driveController, 0);
-        //JoystickButton ballPrep = new JoystickButton(this.m_leftDriverJoystick, 1);
-        //ballPrep.toggleWhenPressed(this.m_testLaunchCommand);
+        // JoystickButton ballPrep = new JoystickButton(this.m_leftDriverJoystick, 1);
+        // ballPrep.toggleWhenPressed(this.m_testLaunchCommand);
 
         JoystickButton ballsOut = new JoystickButton(this.m_operatorJoystick, 6);
         ballsOut.whenHeld(this.launchCommand);
-
-
 
         // this.m_intake.setDefaultCommand(intakeControlCommand);
     }

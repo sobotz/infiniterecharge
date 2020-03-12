@@ -7,11 +7,8 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.commands.DriveCommand;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -19,14 +16,14 @@ import frc.robot.commands.DriveCommand;
 public class DeliverIntakeCommand extends InstantCommand {
   private final IntakeSubsystem m_intake;
 
-    /**
-     * Creates a new ShiftGearCommand.
-     */
-    public DeliverIntakeCommand(IntakeSubsystem subsystem) {
-        this.m_intake = subsystem;
+  /**
+   * Creates a new ShiftGearCommand.
+   */
+  public DeliverIntakeCommand(IntakeSubsystem subsystem) {
+    this.m_intake = subsystem;
 
-        // Use addRequirements() here to declare subsystem dependencies.
-        addRequirements(m_intake);
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(m_intake);
   }
 
   // Called when the command is initially scheduled.
@@ -35,6 +32,7 @@ public class DeliverIntakeCommand extends InstantCommand {
     m_intake.toggleIntake();
   }
 
-  /*public void end(){
-  }*/
+  /*
+   * public void end(){ }
+   */
 }

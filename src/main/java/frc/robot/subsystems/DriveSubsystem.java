@@ -2,12 +2,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -45,7 +45,8 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
             this.backLeftController = new WPI_TalonFX(backLeftControllerPort);
             this.backRightController = new WPI_TalonFX(backRightControllerPort);
 
-            // In order to maintain compatibility with navx-utilizing code, we must stipulate
+            // In order to maintain compatibility with navx-utilizing code, we must
+            // stipulate
             // how the wheels will interact with each other
             this.frontLeftController.setInverted(TalonFXInvertType.CounterClockwise);
             this.backLeftController.setInverted(TalonFXInvertType.CounterClockwise);
