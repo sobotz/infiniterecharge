@@ -63,58 +63,9 @@ public class SerializerSubsystem extends SubsystemBase {
     // Puts sensor voltage values on the Smart dashboard
     //SmartDashboard.putNumber("Sensor 1: ", serializerSensor1.getVoltage()); // true
     //SmartDashboard.putNumber("Sensor 2: ", serializerSensor2.getVoltage()); // true
-
-    if (!previousSSValue && serializerSensor2.getVoltage() < .85) {
-    
-      // update ballCount
-      ballCount++;
-      SmartDashboard.putNumber("Ball Count: ", ballCount);
-    }
-    previousSSValue = serializerSensor2.getVoltage() < .85;
-
-    acceptingBalls = ballCount < 5; //Took out >= 0 because we should still be able to accept balls even when negative
-/*
-    if (acceptingBalls) {
-      if (serializerSensor2Value) {
-        if (previousBallCount == ballCount) {
-          // adds one to the ball count
-          ballCount++;
-          // updates ballcount on smart dashboard
-          ballCount = SmartDashboard.getNumber("Ball Count", ballCount);
-          SmartDashboard.putNumber("Ball Count", ballCount);
-        }
-      } else { 
-        previousBallCount = ballCount;
-      }
-    }
-*/
-    
-/*                  if (launcherSensor.getVoltage() < 0.85) {
-
-      if (ballCount > 0 && !previousLSValue) {
-        // decrement ballCount by 1
-        ballCount--;
-        // update ballCount
-        //SmartDashboard.putNumber("Ball Count: ", ballCount);
-      previousLSValue = true;
-      }
-      ballCount = SmartDashboard.getNumber("Ball Count: ", ballCount);
-    }
-*/
-    if (serializerSensor1.getVoltage() < .85 && acceptingBalls) {
-      serializerMotor1.set(ControlMode.PercentOutput, -SerializerConstants.SERIALIZER_SPEED);
-      //SmartDashboard.putBoolean("Belts On: ", true);
-    } else {
-      serializerMotor1.set(ControlMode.PercentOutput, 0);
-      //SmartDashboard.putBoolean("Belts On: ", false);
-    }
-
-   
-   SmartDashboard.putNumber("Ball Count", ballCount);
-    previousBallCount = ballCount;
-
+    serializerMotor1.set(ControlMode.PercentOutput, ((serializerSensor1.getVoltage() < .85 || serializerSensor2.getVoltage() < .85) && launcherSensor.getVoltage() > .85 ) ? -SerializerConstants.SERIALIZER_SPEED : 0);
   }
-
+  
   public void moveBeltsForward() {
     // accepting balls is set to false to stop incorrect ball placement in the
     // serializer
