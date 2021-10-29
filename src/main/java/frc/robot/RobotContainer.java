@@ -144,7 +144,6 @@ public class RobotContainer {
         // Changed to X
         // JoystickButton activateIntakeButton = new JoystickButton(this.m_operatorJoystick, 6);
         // Changed to left trigger (raw axis)
-        JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 2);
         JoystickButton purgeSerializerButton = new JoystickButton(this.m_operatorJoystick, 4);
 
         // Change to left bumper
@@ -155,7 +154,6 @@ public class RobotContainer {
         deliverIntakeButton.toggleWhenPressed(this.deliverIntakeCommand);
 
         // When the left bumper button is pressed, reverse the intake)
-        reverseIntakeButton.whenPressed(this.fullReverseCommand);
         // activateIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(true));
 
         // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));

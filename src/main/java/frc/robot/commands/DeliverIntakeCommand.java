@@ -30,7 +30,6 @@ public class DeliverIntakeCommand extends InstantCommand {
   @Override
   public void initialize() {
     m_intake.toggleIntake();
-    m_intake.runIntake(1);
   }
 
   public void end(){
