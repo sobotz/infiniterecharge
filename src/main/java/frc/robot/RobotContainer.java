@@ -17,6 +17,7 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.commands.IntakeDirectionControl;
 import frc.robot.commands.LaunchAllCommand;
 import frc.robot.commands.MoveToReflectiveTargetCommand;
+import frc.robot.commands.PurgeCommand;
 import frc.robot.commands.ShiftGearCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DriveSubsystem.MotorControllerConfiguration;
@@ -63,6 +64,9 @@ public class RobotContainer {
 
     /* A command used to control the intake. */
     private final DeliverIntakeCommand deliverIntakeCommand;
+
+    /* A command used to control the intake. */
+    private final PurgeCommand purgeCommand;
 
     /* The command used to launch each of the power cells. */
     private final LaunchAllCommand launchCommand;
@@ -121,6 +125,8 @@ public class RobotContainer {
 
         this.launchCommand = new LaunchAllCommand(this.m_serializer, this.m_launcher);
 
+        this.purgeCommand = new PurgeCommand(this.m_serializer, this.m_intake);
+
         //this.m_testLaunchCommand = new TestLaunchCommand(this.m_serializer, this.m_launcher);
 
         // Configure the button bindings
@@ -138,11 +144,12 @@ public class RobotContainer {
         // Changed to X
         // JoystickButton activateIntakeButton = new JoystickButton(this.m_operatorJoystick, 6);
         // Changed to left trigger (raw axis)
-        JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 5);
+        JoystickButton reverseIntakeButton = new JoystickButton(this.m_operatorJoystick, 2);
+        JoystickButton purgeSerializerButton = new JoystickButton(this.m_operatorJoystick, 4);
 
         // Change to left bumper
 
-
+        purgeSerializerButton.whenHeld(this.purgeCommand);
         gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
 
         deliverIntakeButton.toggleWhenPressed(this.deliverIntakeCommand);
@@ -154,12 +161,8 @@ public class RobotContainer {
         // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
         activateVisionButton.toggleWhenPressed(this.visionCommand);
 
-        // JoystickButton bob = new JoystickButton(m_driveController, 0);
-        //JoystickButton ballPrep = new JoystickButton(this.m_leftDriverJoystick, 1);
-        //ballPrep.toggleWhenPressed(this.m_testLaunchCommand);
-
-        JoystickButton ballsOut = new JoystickButton(this.m_operatorJoystick, 6);
-        ballsOut.whenHeld(this.launchCommand);
+        JoystickButton launchButton = new JoystickButton(this.m_operatorJoystick, 6);
+        launchButton.whenHeld(this.launchCommand);
 
 
 

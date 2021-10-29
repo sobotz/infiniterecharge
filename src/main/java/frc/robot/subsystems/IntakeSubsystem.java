@@ -20,7 +20,7 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
 
     private DoubleSolenoid intakeDelivery;
 
-    boolean hasDeployed;
+    public boolean hasDeployed;
 
     /**
      * Creates a new ExampleSubsystem.
@@ -68,9 +68,11 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
     public boolean toggleIntake() {
         if (this.hasDeployed) {
             intakeDelivery.set(DoubleSolenoid.Value.kForward);
+            this.runIntake(0);
             this.hasDeployed = false;
         } else {
             intakeDelivery.set(DoubleSolenoid.Value.kReverse);
+            this.runIntake(1);
             this.hasDeployed = true;
         }
 

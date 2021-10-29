@@ -23,7 +23,6 @@ public class LaunchAllCommand extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     this.serializer = serializer1;
     this.launcher = launcher1;
-    this.nFramesRun = 0;
     addRequirements(serializer, launcher);
   }
 
@@ -31,28 +30,20 @@ public class LaunchAllCommand extends CommandBase {
   @Override
   public void initialize() {
     this.nFramesRun = 0;
+    this.launcher.startLauncher();
+    this.serializer.acceptingBalls = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.launcher.startLauncher();
 
     if (this.nFramesRun > 50) {
       this.launcher.startRollers();
-      this.serializer.runSerializer();
+      this.serializer.runBelts();
     }
 
     this.nFramesRun++;
-
-    // while (this.serializer.ballCount != 0) {
-    //   this.launcher.stopRollers();
-    //   while (this.launcher.launcherMotor.getSelectedSensorVelocity() !=  Constants.LAUNCHER_VELOCITY_MS) {
-    //     Timer.delay(0.01); //check
-    //   }
-    //   this.launcher.startRollers();
-    //   Timer.delay(0.2); //check
-    // }
  
   }
 
@@ -61,7 +52,8 @@ public class LaunchAllCommand extends CommandBase {
   public void end(boolean interrupted) {
     this.launcher.stopRollers();
     this.launcher.stopLauncher();
-    this.nFramesRun = 0;
+    this.serializer.stopBelts();
+    this.serializer.acceptingBalls = true;
   }
 
   // Returns true when the command should end.
