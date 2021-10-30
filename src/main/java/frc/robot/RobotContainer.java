@@ -19,6 +19,7 @@ import frc.robot.commands.LaunchAllCommand;
 import frc.robot.commands.MoveToReflectiveTargetCommand;
 import frc.robot.commands.PurgeCommand;
 import frc.robot.commands.ShiftGearCommand;
+import frc.robot.commands.SimpleAutoCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.DriveSubsystem.MotorControllerConfiguration;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -70,6 +71,8 @@ public class RobotContainer {
 
     /* The command used to launch each of the power cells. */
     private final LaunchAllCommand launchCommand;
+
+    private SimpleAutoCommand simpleAutoCommand;
 
     private SerializerSubsystem m_serializer;
     private LauncherSubsystem m_launcher;
@@ -127,6 +130,8 @@ public class RobotContainer {
 
         this.purgeCommand = new PurgeCommand(this.m_serializer, this.m_intake);
 
+        this.simpleAutoCommand = new SimpleAutoCommand(this.m_drivetrain, this.m_serializer, this.m_launcher);
+
         //this.m_testLaunchCommand = new TestLaunchCommand(this.m_serializer, this.m_launcher);
 
         // Configure the button bindings
@@ -165,6 +170,10 @@ public class RobotContainer {
 
 
         // this.m_intake.setDefaultCommand(intakeControlCommand);
+    }
+
+    public Command getAutoCommand(){
+        return this.simpleAutoCommand;
     }
 
     public Command getTeleopCommand() {
