@@ -154,15 +154,15 @@ public class RobotContainer {
         // Change to left bumper
 
         purgeSerializerButton.whenHeld(this.purgeCommand);
-        gearShiftButton.toggleWhenPressed(new ShiftGearCommand(this.m_drivetrain));
+        gearShiftButton.whenPressed(new ShiftGearCommand(this.m_drivetrain));
 
-        deliverIntakeButton.toggleWhenPressed(this.deliverIntakeCommand);
+        deliverIntakeButton.whenHeld(this.deliverIntakeCommand);
 
         // When the left bumper button is pressed, reverse the intake)
         // activateIntakeButton.whenPressed(() -> this.intakeControlCommand.setDirection(true));
 
         // reverseIntakeButton.whenPressed(new ReverseIntakeCommand(this.m_intake));
-        activateVisionButton.toggleWhenPressed(this.visionCommand);
+        // activateVisionButton.toggleWhenPressed(this.visionCommand);
 
         JoystickButton launchButton = new JoystickButton(this.m_operatorJoystick, 6);
         launchButton.whenHeld(this.launchCommand);

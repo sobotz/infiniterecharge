@@ -645,14 +645,19 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
             // gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
 
             // Move forward and back using the gain variable
-            this.m_drivetrain.drive(Type.RHINO, new double[] { -gain, -gain });
+            //this.m_drivetrain.drive(Type.RHINO, new double[] { -gain, -gain });
+            System.out.println("gain = " + gain);
+            System.out.println("correcting z");
         } else if (this.state.needsCorrectionOnAxis(Axis.X, tolerance) && this.cfg.supportedAxes[0]) {
             // Calculate the gain with the x offset
             double gain = this.cfg.getKp() * offsets[0] * this.cfg.getMaximumSpeed();
             gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
 
             // Spin in one spot using the provided gain variable
-            this.m_drivetrain.drive(Type.RHINO, new double[] { -gain, gain });
+            //this.m_drivetrain.drive(Type.RHINO, new double[] { -gain, gain });
+            System.out.println("gain = " + gain);
+            System.out.println("correcting x");
+            
         } else if (this.state.needsCorrectionOnAxis(Axis.Y, this.cfg.getErrorTolerance())
                 && this.state.hasInitialHeading && this.cfg.supportedAxes[2]) {
             // Calculate the gain with the y offset
@@ -660,7 +665,10 @@ public class MoveToReflectiveTargetCommand extends CommandBase {
             gain += gain < 0 ? -this.cfg.getKi() : this.cfg.getKi();
 
             // Move forward and back using the gain variable
-            this.m_drivetrain.drive(Type.RHINO, new double[] { gain, gain });
+            //this.m_drivetrain.drive(Type.RHINO, new double[] { gain, gain });
+            System.out.println("gain = " + gain);
+
+            System.out.println("correcting y");
         }
     }
 

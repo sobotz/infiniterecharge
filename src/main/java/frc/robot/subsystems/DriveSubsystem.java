@@ -135,7 +135,7 @@ public class DriveSubsystem extends SubsystemBase implements Preferences.Group {
     }
 
     public void manualDrive2(double speed, double rotation) {
-        this.motorControllers.frontLeftController.set(ControlMode.PercentOutput, -speed,
+        this.motorControllers.frontLeftController.set(ControlMode.PercentOutput, speed,
                 DemandType.ArbitraryFeedForward, -rotation);
         this.motorControllers.frontRightController.set(ControlMode.PercentOutput, speed,
                 DemandType.ArbitraryFeedForward, -rotation);

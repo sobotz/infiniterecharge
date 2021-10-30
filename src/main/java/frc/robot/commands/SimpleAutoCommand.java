@@ -45,10 +45,10 @@ public class SimpleAutoCommand extends CommandBase {
       this.m_launcher.startRollers();
       this.m_serializer.runBelts();
       this.m_serializer.acceptingBalls = false;
-    }else if(timer.get() < 5){
+    }else if(timer.get() < 4.3) {
       this.m_launcher.stopLauncher();
       this.m_launcher.stopRollers();
-      this.m_drive.manualDrive2(0.5, 0);
+      this.m_drive.manualDrive2(-0.5, .5);
     }else{
       this.m_drive.manualDrive2(0, 0);
       this.m_launcher.stopLauncher();
