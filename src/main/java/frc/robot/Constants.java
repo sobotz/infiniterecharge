@@ -43,7 +43,7 @@ public final class Constants {
 		public static final int INTAKE_SOLENOID_DEPLOY = 2;
 		public static final int INTAKE_SOLENOID_RETRACT = 3;
 		public static final int INTAKE_MOTOR = 8;
-		public static final double MAXIMUM_INTAKE_SPEED = 0.4;
+		public static final double MAXIMUM_INTAKE_SPEED = 0.7;
 	}
 
 	public static final class LauncherConstants {
