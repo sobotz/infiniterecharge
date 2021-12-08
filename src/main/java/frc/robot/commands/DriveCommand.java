@@ -32,7 +32,21 @@ public class DriveCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drivetrain.manualDrive2(RobotContainer.m_leftDriverJoystick.getRawAxis(1), -RobotContainer.m_leftDriverJoystick.getRawAxis(0));
+    double xAxis = RobotContainer.m_leftDriverJoystick.getRawAxis(0);
+    double yAxis = RobotContainer.m_leftDriverJoystick.getRawAxis(1);
+
+    System.out.println(yAxis);
+
+    if (Math.abs(yAxis) < .1){
+      yAxis = 0;
+    }
+
+    if (Math.abs(xAxis) < .1){
+      xAxis = 0;
+    }
+
+    drivetrain.manualDrive2(yAxis * yAxis, -(xAxis * xAxis));
+   // drivetrain.manualDrive2(yAxis, -xAxis);
   }
 
   // Called once the command ends or is interrupted.
