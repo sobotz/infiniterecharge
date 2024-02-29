@@ -24,7 +24,7 @@ public class SerializerSubsystem extends SubsystemBase {
   // WPI_TalonFX serializerMotor; For use with Falcon 500
 
   // Initializes the sensors in the serializer and launcher
-  private AnalogInput serializerSensor1;
+  private AnalogInput serializerSensor1;   
   private AnalogInput serializerSensor2;
   private AnalogInput launcherSensor;
 

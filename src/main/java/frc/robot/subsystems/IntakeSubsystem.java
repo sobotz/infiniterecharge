@@ -29,8 +29,7 @@ public class IntakeSubsystem extends SubsystemBase implements Preferences.Group 
     public IntakeSubsystem() {
         intakeTalon = new WPI_TalonSRX(IntakeConstants.INTAKE_MOTOR);
 
-        intakeDelivery = new DoubleSolenoid(IntakeConstants.INTAKE_SOLENOID_DEPLOY,
-                IntakeConstants.INTAKE_SOLENOID_RETRACT);
+        intakeDelivery = new DoubleSolenoid(IntakeConstants.INTAKE_SOLENOID_DEPLOY, IntakeConstants.INTAKE_SOLENOID_RETRACT);
 
         intakeTalon.configFactoryDefault();
 
